@@ -1,0 +1,1 @@
+export const API_URL = "http://localhost:1235/vita-study/record-manager-server";
