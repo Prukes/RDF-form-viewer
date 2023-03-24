@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import {API_URL} from "../constants/ApiConstants";
 import axios from "axios";
 import '../assets/LoginPage.css';
-
+import {useNavigate} from "react-router-dom";
 
 type Inputs = {
     username: string,
@@ -12,10 +12,9 @@ type Inputs = {
 };
 const LoginPage = () => {
     const { register, handleSubmit,setError, formState: {errors} } = useForm<Inputs>();
+    const navigation = useNavigate();
 
     const onSubmit = async (data:Inputs) => {
-        let resp = await fetch(`${API_URL}/j_spring_security_check`,{method:'POST',body:`username=ahoj&password=ahoj`,headers:{"Content-Type":'application/x-www-form-urlencoded'}});
-        console.log(resp);
         let axiosCreds = axios.create({
             withCredentials: true
         });
@@ -24,8 +23,12 @@ const LoginPage = () => {
         console.log(username, password);
         if (username && password) {
             const response = await axiosCreds.post(`${API_URL}/j_spring_security_check`, `username=${username}&password=${password}`);
-
+            console.log(response);
+            if (response.status === 200){
+                navigation(-1);
+            }
         }
+
     };
 
     return (

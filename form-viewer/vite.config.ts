@@ -20,7 +20,7 @@ export default ({mode}) => {
         },
         injectRegister:'script',
         injectManifest:{
-            globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+            globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         },
         strategies:'injectManifest',
         srcDir:'src',

@@ -14,19 +14,19 @@ declare let self: ServiceWorkerGlobalScope
 declare type ExtendableEvent = any
 
 
-
 precacheAndRoute(self.__WB_MANIFEST);
 
 self.skipWaiting();
 clientsClaim();
 
-self.addEventListener('fetch',(event)=>{
-    console.log('log of event from sw',event);
-    return fetch(event.request);
-});
+// self.addEventListener('fetch',(event)=>{
+//     console.log('log of event from sw',event);
+//     return fetch(event.request);
+// });
 
 registerRoute('http://localhost:1235/vita-study/record-manager-server/j_spring_security_check',async (event)=>{
     console.log("registerRoute ",event);
+    const reg = await navigator.serviceWorker.ready;
     return fetch(event.request);
 },'POST');
 
