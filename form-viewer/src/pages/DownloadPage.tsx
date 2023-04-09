@@ -25,7 +25,6 @@ const DownloadPage: React.FC = () => {
     const [importedData, setImportedData] = useState<any>(null);
     const navigation = useNavigate();
 
-    const navTitle = 'AAAAAAA';
     let axiosCreds = axios.create({
         withCredentials: true
     });
@@ -64,30 +63,34 @@ const DownloadPage: React.FC = () => {
         // console.log("got form");
         const resData = response?.data;
         const formDataKey = uuidv4();
-        const form_metadata:FormMetadata = {dataKey:formDataKey, name:form.localName, priority:Priority.MEDIUM,description:form.formTemplate};
+        const form_metadata: FormMetadata = {
+            dataKey: formDataKey,
+            name: form.localName,
+            priority: Priority.MEDIUM,
+            description: form.formTemplate,
+            downloadDate: Date.now()
+        };
         // console.log(response?.data);
         await setInDB(FORMS_DATA_STORE, formDataKey, resData);
         await setInDB(FORMS_METADATA_STORE, uuidv4(), form_metadata);
         await setInDB(FORMS_RECORDS_STORE, formDataKey, form);
         setIsDownloadingForm(false);
         setIsDownloadingDropdown(true);
+
+        const FORM_GEN_POSSIBLE_VALUES_URL = `${API_URL}/rest/formGen/possibleValues`;
         for (const property of resData['@graph']) {
             const query = property['has-possible-values-query'];
             if (query) {
-                await axiosCreds.get(`${API_URL}/rest/formGen/possibleValues`, {params: {query: query}});
+                await axiosCreds.get(FORM_GEN_POSSIBLE_VALUES_URL, {params: {query: query}});
             }
-
         }
+
         setIsDownloadingDropdown(false);
     };
 
-    const handleHomeClick: React.MouseEventHandler<HTMLAnchorElement> = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        navigation(RoutingConstants.DASHBOARD);
-    };
     const handleClickBack: React.MouseEventHandler<HTMLButtonElement> = (e: React.MouseEvent<HTMLButtonElement>) => {
         navigation(-1);
     }
-
 
     const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -123,14 +126,14 @@ const DownloadPage: React.FC = () => {
     const handleBatchDownload = async () => {
         const formsCopy = [...selectedForms];
         let len = formsCopy.length;
-        while(len){
-            const formIndex = len-1;
+        while (len) {
+            const formIndex = len - 1;
             console.log(formsCopy[formIndex]);
-            try{
+            try {
                 await downloadForm(formsCopy[formIndex]);
-                formsCopy.splice(formIndex,1);
+                formsCopy.splice(formIndex, 1);
                 len--;
-            } catch{
+            } catch {
                 console.error('caught in batch download');
                 setSelectedForms(formsCopy);
                 return;
@@ -140,8 +143,8 @@ const DownloadPage: React.FC = () => {
     }
 
     const checkboxChanged = (event: React.ChangeEvent<HTMLInputElement>, form: FormRecord) => {
-        if(event.target.checked){
-            setSelectedForms(forms => [...forms,form]);
+        if (event.target.checked) {
+            setSelectedForms(forms => [...forms, form]);
         } else {
             setSelectedForms(forms => {
                 return forms.filter(f => f !== form);
@@ -153,7 +156,7 @@ const DownloadPage: React.FC = () => {
 
     const specialButton: ReactNode =
         <>
-            { selectedForms.length > 0 ?
+            {selectedForms.length > 0 ?
                 <Button variant="success" onClick={() => handleBatchDownload()}>
                     Batch download
                 </Button>
@@ -195,7 +198,9 @@ const DownloadPage: React.FC = () => {
             {!isDownloading ?
 
                 <Container fluid style={{paddingBottom: '3.5rem'}}>
-                    {selectedForms.map(form => {return <p>{form.localName}</p>})}
+                    {selectedForms.map(form => {
+                        return <p>{form.localName}</p>
+                    })}
                     {records.map((record) => (
                         <Row key={record?.key} className={"my-2"}>
                             <Col xs={12}>

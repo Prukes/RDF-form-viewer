@@ -5,7 +5,8 @@ const RoutingConstants = {
     DOWNLOAD: "download",
     REQUESTS: "requests",
     LOGIN: "login",
-    FORM: "form"
+    FORM: "form",
+    EDIT_FORM:"edit"
 };
 
 export default RoutingConstants;

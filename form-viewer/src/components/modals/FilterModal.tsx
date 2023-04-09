@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useState} from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import Priority from "../utils/PriorityEnum";
+import Priority from "../../utils/PriorityEnum";
 
 type FilterModalProps = {
     show: boolean;
@@ -48,8 +48,8 @@ function FilterModal(props: FilterModalProps) {
 
                     <Form.Group controlId="formPriority">
                         <Form.Label>Priority</Form.Label>
-                        <Form.Control as="select" value={priority.toString()} onChange={handlePriorityChange}>
-                            <option value={Priority.DEFAULT.toString()}>Any</option>
+                        <Form.Control as="select" value={priority} onChange={handlePriorityChange}>
+                            <option value={Priority.DEFAULT}>Any</option>
                             <option value={Priority.HIGH}>High</option>
                             <option value={Priority.MEDIUM}>Medium</option>
                             <option value={Priority.LOW}>Low</option>

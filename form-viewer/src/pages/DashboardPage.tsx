@@ -1,15 +1,16 @@
-import React, {ReactNode, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {FORMS_DATA_STORE, FORMS_METADATA_STORE, FORMS_RECORDS_STORE} from "../constants/DatabaseConstants";
-import FormsDBSchema from "../utils/FormsDBSchema";
+import FormsDBSchema, {FormMetadata} from "../utils/FormsDBSchema";
 import {deleteFromDB, getAllFromDBWithKeys} from "../services/DBService";
-import {Container, Row, Col, ListGroup, Button, ButtonGroup, Modal} from 'react-bootstrap';
+import {Button, ButtonGroup, Col, Container, ListGroup, Row} from 'react-bootstrap';
 import {BsDownload, BsPencil, BsSearch, BsTrash} from "react-icons/bs";
 import RoutingConstants from "../constants/RoutingConstants";
-import {useNavigate} from "react-router-dom";
+import {Routes, useNavigate} from "react-router-dom";
 import Layout from "../components/Layout";
 import {SiReacthookform} from "react-icons/all";
-import FilterModal from "../components/FilterModal";
+import FilterModal from "../components/modals/FilterModal";
 import Priority from "../utils/PriorityEnum";
+import {FaTimes} from "react-icons/all";
 
 
 const headers = {
@@ -18,30 +19,17 @@ const headers = {
 const Dashboard: React.FC = () => {
     const navigate = useNavigate();
     const [forms, setForms] = useState<FormsDBSchema['form-metadata'][]>([]);
-    const [modalState, setModalState] = useState({show:false,modal:null});
+    const [showFilterModal, setShowFilterModal] = useState(false);
+    const [isFiltering, setIsFiltering] = useState(false);
 
-    const handleClose = () => setModalState(prevState => {
-        console.log(prevState);
-        return {
-            modal:null,
-            show:false
-    }
-    });
-    const handleShow = (m?:any) => {
-        console.log(m);
-        setModalState({show:true, modal:m});
-    }
+    const handleClose = () => setShowFilterModal(false);
 
-
+    const fetchForms = async () => {
+        const formsMetadata = await getAllFromDBWithKeys<FormsDBSchema['form-metadata']>(FORMS_METADATA_STORE);
+        console.log('forms', formsMetadata);
+        setForms(formsMetadata);
+    };
     useEffect(() => {
-        const fetchForms = async () => {
-            const formsMetadata = await getAllFromDBWithKeys<FormsDBSchema['form-metadata']>(FORMS_METADATA_STORE);
-            console.log('forms', formsMetadata);
-
-            setForms(formsMetadata);
-
-        };
-
         fetchForms();
 
     }, []);
@@ -49,9 +37,9 @@ const Dashboard: React.FC = () => {
     const handleOpenClick = (formDataKey: string) => {
         navigate(`${RoutingConstants.FORM}/${formDataKey}`);
     };
-    const handleEditClick = (formDataKey: string) => {
-        const mod = <FilterModal show={modalState.show} onHide={handleClose} filterFunction={filterForms} />;
-        handleShow(mod);
+
+    const handleEditClick = (formData: FormsDBSchema['form-metadata']) => {
+        navigate(RoutingConstants.EDIT_FORM,{state:formData});
     };
     const handleRemoveClick = async (formObject: FormsDBSchema['form-metadata']) => {
         const formKey = formObject.key;
@@ -66,15 +54,30 @@ const Dashboard: React.FC = () => {
 
     const filterForms = (name:string, priority:Priority, tag: string) => {
         console.log(name,priority,tag);
+        setForms((prevForms) => {
+            return prevForms.filter((entry) => {
+                const entryData: FormMetadata = entry.value;
+                const boolName = !name ? true : entryData.name?.includes(name) ?? true;
+                const boolPriority = priority == Priority.DEFAULT ? true : entryData.priority === priority;
+                const boolTag = !tag ? true : entryData.tags?.includes(tag) ?? true;
+
+                return boolName && boolPriority && boolTag;
+            });
+        });
+        setIsFiltering(true);
     }
 
     const specialButton = <ButtonGroup>
-        <Button variant="success" onClick={() => {
-            const mod = <FilterModal show={modalState.show} onHide={handleClose} filterFunction={filterForms} />;
-            console.log('Filter button clicked');
-            handleShow(mod);
+        <Button variant={isFiltering ? "info" : "success"} onClick={() => {
+            if(!isFiltering){
+                setShowFilterModal(true);
+            } else {
+                fetchForms();
+                setIsFiltering(false);
+            }
+
         }}>
-            <BsSearch/>
+            {isFiltering ? <FaTimes/> : <BsSearch/>}
         </Button>
         <Button variant="success" href={RoutingConstants.DOWNLOAD} className={"ms-2"}>
             <BsDownload/>
@@ -83,7 +86,8 @@ const Dashboard: React.FC = () => {
 
     return (
         <Layout title={"Dashboard"} specialButton={specialButton}>
-            {modalState.modal}
+            <FilterModal show={showFilterModal} onHide={handleClose} filterFunction={filterForms}></FilterModal>
+
             <Container fluid className="mobile-view-container">
                 <Row className="mobile-view-content mt-2">
                     <Col>
@@ -98,7 +102,7 @@ const Dashboard: React.FC = () => {
                                                     className="p-0 me-2">
                                                 <SiReacthookform/>
                                             </Button>
-                                            <Button variant="link" onClick={() => handleEditClick(item.value.dataKey)}
+                                            <Button variant="link" onClick={() => handleEditClick(item)}
                                                     className="p-0 me-2">
                                                 <BsPencil/>
                                             </Button>

@@ -7,6 +7,7 @@ import RoutingConstants from "../constants/RoutingConstants";
 import LoginPage from "../pages/LoginPage";
 import DownloadPage from "../pages/DownloadPage";
 import FormPage from "../pages/FormPage";
+import EditForm from "./EditForm";
 
 
 const Router: React.FC = () => {
@@ -18,7 +19,7 @@ const Router: React.FC = () => {
                 <Route path={RoutingConstants.LOGIN} element={<LoginPage />} />
                 <Route path={RoutingConstants.DOWNLOAD} element={<DownloadPage />} />
                 <Route path={`${RoutingConstants.FORM}/:uuid`} element={<FormPage />} />
-
+                <Route path={RoutingConstants.EDIT_FORM} element={<EditForm/>}/>
                 <Route path="*" element={<ErrorPage />} />
             </RouterRoutes>
         </BrowserRouter>

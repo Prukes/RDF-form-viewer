@@ -31,6 +31,8 @@ export interface FormMetadata {
     name?:string;
     tags?:string[];
     description?:string;
+    lastServerUpload?:number;
+    downloadDate:number;
 }
 export interface FormRecord {
     uri: string;
