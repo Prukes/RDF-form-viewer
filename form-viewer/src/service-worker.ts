@@ -90,7 +90,7 @@ registerRoute(({url}) =>
 
 registerRoute(USER_CREDS_URL, new StaleWhileRevalidate({
     cacheName: 'login-creds-cache',
-    plugins: [new ExpirationPlugin({maxAgeSeconds: 60 * 15})]
+    plugins: [new ExpirationPlugin({maxAgeSeconds: 60 * 30})]
 }));
 // registerRoute(({url}) => {
 //     console.log(url);

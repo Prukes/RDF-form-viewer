@@ -14,6 +14,10 @@ export default interface FormsDBSchema extends DBSchema {
       key:string;
       value: FormRecord;
     };
+    'form-file':{
+        key:string;
+        value:Array<FormFile>;
+    }
 };
 
 export type FormsDBRecord<K extends keyof FormsDBSchema> = {
@@ -33,6 +37,7 @@ export interface FormMetadata {
     description?:string;
     lastServerUpload?:number;
     downloadDate:number;
+    wasUpdated:boolean;
 }
 export interface FormRecord {
     uri: string;
@@ -76,6 +81,13 @@ export interface Institution {
     uri: string
     key: string
     name: string
+}
+
+export interface FormFile {
+    fileName: string
+    id: string
+    type: string
+    data: object
 }
 
 

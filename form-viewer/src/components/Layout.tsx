@@ -1,13 +1,13 @@
 import React, {ReactNode} from 'react';
-import {Container, Navbar, Nav, Button} from 'react-bootstrap';
-import {BsArrowLeft, BsDownload} from "react-icons/bs";
-import RoutingConstants from "../constants/RoutingConstants";
+import {Container, Navbar, Nav, Button, Spinner} from 'react-bootstrap';
+import {BsArrowLeft} from "react-icons/bs";
 
 type LayoutProps = {
     onClickBack?: React.MouseEventHandler<HTMLButtonElement> | undefined;
     children: ReactNode;
     title: string;
     specialButton?: ReactNode;
+    isLoading?: boolean;
 };
 const styles = {
     content: {
@@ -18,7 +18,14 @@ const styles = {
 const Layout: React.FC<LayoutProps> = (props) => {
     return (
         <Container fluid style={styles.content}>
-            {props.children}
+            {
+                props.isLoading ?
+                    <Container fluid className="justify-content-md-center">
+                        <Spinner ></Spinner>
+                    </Container>
+                    :
+                    props.children
+            }
             <Navbar fixed="bottom" className="justify-content-between custom-navbar">
                 {
                     props.onClickBack ? <Nav.Item className="px-3">

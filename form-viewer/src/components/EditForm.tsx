@@ -55,12 +55,6 @@ const EditForm: React.FC = () => {
             setError(e.toString());
         }
 
-
-        // Call the filter function passed down from props with the filter parameters
-        // props.submitFunction(name, priority, tags);
-        // Close the modal
-        // props.onHide();
-        // throw new DOMException("Doimplementovat ty dicku");
     };
 
     const formTags = tags.map((value, index) => {

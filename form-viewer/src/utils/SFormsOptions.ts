@@ -1,4 +1,3 @@
-import {Constants} from "@kbss-cvut/s-forms";
 
 
 const modalProps = {
@@ -34,8 +33,10 @@ const options = {
     currentUser: "http://fel.cvut.cz/people/max-chopart",
     icons: [
         {
-            id: Constants.ICONS.QUESTION_HELP,
-            behavior: Constants.ICON_BEHAVIOR.ENABLE,
+            // id: Constants.ICONS.QUESTION_HELP,
+            id: "questionHelp",
+            // behavior: Constants.ICON_BEHAVIOR.ENABLE,
+            behavior: "enable",
         }
     ],
 };

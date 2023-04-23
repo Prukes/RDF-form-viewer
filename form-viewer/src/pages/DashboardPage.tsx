@@ -1,21 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import {FORMS_DATA_STORE, FORMS_METADATA_STORE, FORMS_RECORDS_STORE} from "../constants/DatabaseConstants";
-import FormsDBSchema, {FormMetadata} from "../utils/FormsDBSchema";
-import {deleteFromDB, getAllFromDBWithKeys} from "../services/DBService";
+import FormsDBSchema, {FormMetadata, FormRecord} from "../utils/FormsDBSchema";
+import {deleteFromDB, getAllFromDBWithKeys, getFromDB, setInDB} from "../services/DBService";
 import {Button, ButtonGroup, Col, Container, ListGroup, Row} from 'react-bootstrap';
 import {BsDownload, BsPencil, BsSearch, BsTrash} from "react-icons/bs";
 import RoutingConstants from "../constants/RoutingConstants";
-import {Routes, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import Layout from "../components/Layout";
 import {SiReacthookform} from "react-icons/all";
 import FilterModal from "../components/modals/FilterModal";
 import Priority from "../utils/PriorityEnum";
 import {FaTimes} from "react-icons/all";
 
-
-const headers = {
-    'Content-Type': 'application/json',
-}
 const Dashboard: React.FC = () => {
     const navigate = useNavigate();
     const [forms, setForms] = useState<FormsDBSchema['form-metadata'][]>([]);
@@ -29,8 +25,37 @@ const Dashboard: React.FC = () => {
         console.log('forms', formsMetadata);
         setForms(formsMetadata);
     };
+
+    const backupForms = async () => {
+        const now = Date.now();
+        const formsMetadata = await getAllFromDBWithKeys<FormsDBSchema['form-metadata']>(FORMS_METADATA_STORE);
+        for (const form of formsMetadata) {
+            const value: FormMetadata = form.value;
+            const wasUpdated = value.wasUpdated;
+            const lastServerUpload = value.lastServerUpload;
+
+            if (!wasUpdated) continue;
+            if (lastServerUpload) {
+                const timeDiffms = now - lastServerUpload;
+                const timeDiffDays = timeDiffms / 1000 / 60 / 60 / 24;
+
+                if (timeDiffDays >= 30) {
+                    const formRecord: FormRecord = await getFromDB(FORMS_RECORDS_STORE, value.dataKey);
+                    console.log(formRecord);
+                    //TODO: send record
+                    //TODO: set last server upload
+                    //TODO: send files
+                }
+            } else {
+                value.lastServerUpload = Date.now();
+                await setInDB(FORMS_METADATA_STORE,form.key,form.value);
+            }
+        }
+    };
+
     useEffect(() => {
         fetchForms();
+        backupForms();
 
     }, []);
 
@@ -39,7 +64,7 @@ const Dashboard: React.FC = () => {
     };
 
     const handleEditClick = (formData: FormsDBSchema['form-metadata']) => {
-        navigate(RoutingConstants.EDIT_FORM,{state:formData});
+        navigate(RoutingConstants.EDIT_FORM, {state: formData});
     };
     const handleRemoveClick = async (formObject: FormsDBSchema['form-metadata']) => {
         const formKey = formObject.key;
@@ -52,8 +77,8 @@ const Dashboard: React.FC = () => {
         });
     };
 
-    const filterForms = (name:string, priority:Priority, tag: string) => {
-        console.log(name,priority,tag);
+    const filterForms = (name: string, priority: Priority, tag: string) => {
+        console.log(name, priority, tag);
         setForms((prevForms) => {
             return prevForms.filter((entry) => {
                 const entryData: FormMetadata = entry.value;
@@ -69,7 +94,7 @@ const Dashboard: React.FC = () => {
 
     const specialButton = <ButtonGroup>
         <Button variant={isFiltering ? "info" : "success"} onClick={() => {
-            if(!isFiltering){
+            if (!isFiltering) {
                 setShowFilterModal(true);
             } else {
                 fetchForms();

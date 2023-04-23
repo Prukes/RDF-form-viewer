@@ -1,18 +1,19 @@
 import React, {useEffect, useRef, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {getFromDB, setInDB} from "../services/DBService";
-import {FORMS_DATA_STORE, FORMS_RECORDS_STORE} from "../constants/DatabaseConstants";
+import {FORMS_DATA_STORE, FORMS_FILES, FORMS_RECORDS_STORE} from "../constants/DatabaseConstants";
 import {Button, Container, Spinner} from "react-bootstrap";
-import SForms from "@kbss-cvut/s-forms";
 import SFormsOptions from "../utils/SFormsOptions";
 import {API_URL} from "../constants/ApiConstants";
-import axios from "axios";
 import Layout from "../components/Layout";
 import {AiFillSave} from "react-icons/all";
 import SFormsRefInterface from "../utils/SFormsRefInterface";
-import {FormDataContent, FormRecord, Question} from "../utils/FormsDBSchema";
+import {FormDataContent, FormFile, FormRecord} from "../utils/FormsDBSchema";
 import jsonld from 'jsonld';
 import CONTEXT_CONSTANT from "../constants/FormContext";
+
+import SForms, {Constants} from "@kbss-cvut/s-forms";
+import {apiService} from "../utils/apiService";
 
 const FormPage: React.FC = () => {
     const {uuid} = useParams<{ uuid: string }>();
@@ -63,15 +64,33 @@ const FormPage: React.FC = () => {
     }
 
     const fetchTypeAheadValues = async (query: string) => {
-        let axiosBackend = axios.create({
-            withCredentials: true
-        });
 
         console.log("fetchTypeAhead", query)
         const FORM_GEN_POSSIBLE_VALUES_URL = `${API_URL}/rest/formGen/possibleValues`;
-        const result = await axiosBackend.get(FORM_GEN_POSSIBLE_VALUES_URL, {params: {query: query}});
+        const result = await apiService.get(FORM_GEN_POSSIBLE_VALUES_URL, {params: {query: query}});
         return result.data;
     }
+
+    const onFileUpload = async (file:FormFile) => {
+        console.log(file);
+        const files:FormFile[] = await getFromDB(FORMS_FILES,uuid as string);
+
+        await setInDB(FORMS_FILES, uuid as string, [...files, file]);
+    };
+
+    const onGetFile = async (questionAnswer:any) => {
+        if(questionAnswer && questionAnswer[0]){
+            const answer = questionAnswer[0];
+            const fileObjectValue = answer[Constants.HAS_OBJECT_VALUE];
+            if(!fileObjectValue) return null;
+
+            const fileID = fileObjectValue['@id'];
+            const files:FormFile[] = await getFromDB(FORMS_FILES,uuid as string);
+            const file = files.find((f) => f.id == fileID);
+
+            return !!file;
+        }
+    };
 
     if (!form) {
         return <Spinner animation="border" variant="primary"/>;
@@ -84,11 +103,16 @@ const FormPage: React.FC = () => {
             <Container>
                 <SForms //@ts-ignore
                     form={form}
+                    //@ts-ignore
                     ref={formRef}
+                    //@ts-ignore
                     options={SFormsOptions}
                     fetchTypeAheadValues={fetchTypeAheadValues}
+                    //@ts-ignore
                     loader={<Spinner animation={"border"}/>}
                     enableForwardSkip={true}
+                    getFile={onGetFile}
+                    onFileUpload={onFileUpload}
                 ></SForms>
 
             </Container>
