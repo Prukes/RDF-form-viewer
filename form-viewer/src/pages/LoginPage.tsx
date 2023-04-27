@@ -1,11 +1,12 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import {API_URL, LOGIN_URL, USER_CREDS_URL} from "../constants/ApiConstants";
-import axios from "axios";
+import {LOGIN_URL, USER_CREDS_URL} from "../constants/ApiConstants";
 import '../assets/LoginPage.css';
 import {useNavigate} from "react-router-dom";
 import Layout from "../components/Layout";
+import {apiService} from "../utils/ApiService";
+import {AuthContext} from "../contexts/UserContextProvider";
 
 type Inputs = {
     username: string,
@@ -14,29 +15,35 @@ type Inputs = {
 const LoginPage = () => {
     const { register, handleSubmit, setError, formState: {errors} } = useForm<Inputs>();
     const navigation = useNavigate();
+    const authContext = useContext(AuthContext);
 
     const onSubmit = async (data:Inputs) => {
-        let axiosCreds = axios.create({
-            withCredentials: true
-        });
         const username = data.username;
         const password = data.password;
-        // console.log(username, password);
+        console.log(username, password);
+
         if (username && password) {
-            const responseLogin = await axiosCreds.post(LOGIN_URL, `username=${username}&password=${password}`);
+            const responseLogin = await apiService.post(LOGIN_URL, `username=${username}&password=${password}`);
             console.log(responseLogin);
             if (responseLogin.status !== 200){
                 console.error('Oopsie', responseLogin.data);
                 setError('root',responseLogin.data);
             }
-            const responseUserCreds = await axiosCreds.get(USER_CREDS_URL);
-            if (responseUserCreds.status !== 200){
-                console.error('Oopsie', responseUserCreds.data);
-                setError('root',responseUserCreds.data);
-            }
-            navigation(-1);
+            await downloadUserCredentials();
         }
 
+    };
+
+    const downloadUserCredentials = async () => {
+        const responseUserCreds = await apiService.get(USER_CREDS_URL);
+        console.log(responseUserCreds);
+        if (responseUserCreds.status !== 200){
+            console.error('Oopsie', responseUserCreds.data);
+            setError('root',responseUserCreds.data);
+        } else {
+            authContext.setAuthUser(responseUserCreds.data);
+            navigation(-1);
+        }
     };
 
     return (

@@ -4,7 +4,7 @@ import {
     FORMS_DB,
     FORMS_FILES,
     FORMS_METADATA_STORE,
-    FORMS_RECORDS_STORE
+    FORMS_RECORDS_STORE, USER_CREDS
 } from "../constants/DatabaseConstants";
 import FormsDBSchema, {FormsDBRecord} from "../utils/FormsDBSchema";
 
@@ -25,13 +25,14 @@ async function openDatabase(): Promise<IDBPDatabase<FormsDBSchema>> {
             db.createObjectStore(FORMS_METADATA_STORE);
             db.createObjectStore(FORMS_RECORDS_STORE);
             db.createObjectStore(FORMS_FILES);
+            db.createObjectStore(USER_CREDS,{keyPath:'uri'});
         },
     });
     return db;
 }
 
 // Define a function for getting a value from the database by key
-export async function getFromDB(storeName: StoreNames<FormsDBSchema>, key: string | IDBKeyRange): Promise<any> {
+export async function getFromDB(storeName: StoreNames<FormsDBSchema>, key: string | IDBValidKey): Promise<any> {
     const database = await openDatabase();
     const tx = database.transaction(storeName, 'readonly');
     const value = await tx.objectStore(storeName).get(key);
@@ -40,7 +41,7 @@ export async function getFromDB(storeName: StoreNames<FormsDBSchema>, key: strin
 }
 
 // Define a function for setting a value in the database by key
-export async function setInDB(storeName: StoreNames<FormsDBSchema>, key: string | IDBKeyRange, value: any): Promise<void> {
+export async function setInDB(storeName: StoreNames<FormsDBSchema>, key: string | IDBValidKey, value: any): Promise<void> {
     // console.log(storeName, 'opening');
     const database = await openDatabase();
     const tx = database.transaction(storeName, 'readwrite');
@@ -77,7 +78,7 @@ export async function getAllFromDBWithKeys<T extends FormsDBSchema[keyof FormsDB
     return entries;
 }
 
-export async function deleteFromDB(storeName: StoreNames<FormsDBSchema>, key: string | IDBKeyRange): Promise<void> {
+export async function deleteFromDB(storeName: StoreNames<FormsDBSchema>, key: string | IDBValidKey): Promise<void> {
     const database = await openDatabase();
     const tx = database.transaction(storeName, 'readwrite');
     await tx.objectStore(storeName).delete(key);

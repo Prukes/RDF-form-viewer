@@ -13,7 +13,7 @@ import jsonld from 'jsonld';
 import CONTEXT_CONSTANT from "../constants/FormContext";
 
 import SForms, {Constants} from "@kbss-cvut/s-forms";
-import {apiService} from "../utils/apiService";
+import {apiService} from "../utils/ApiService";
 
 const FormPage: React.FC = () => {
     const {uuid} = useParams<{ uuid: string }>();
@@ -74,8 +74,13 @@ const FormPage: React.FC = () => {
     const onFileUpload = async (file:FormFile) => {
         console.log(file);
         const files:FormFile[] = await getFromDB(FORMS_FILES,uuid as string);
+        if(files == undefined){
+            await setInDB(FORMS_FILES, uuid as string, [file]);
+        } else {
+            await setInDB(FORMS_FILES, uuid as string, [...files, file]);
+        }
 
-        await setInDB(FORMS_FILES, uuid as string, [...files, file]);
+
     };
 
     const onGetFile = async (questionAnswer:any) => {
@@ -90,6 +95,12 @@ const FormPage: React.FC = () => {
 
             return !!file;
         }
+    };
+
+    const onFileDelete = async (file:FormFile) => {
+        const files:FormFile[] = await getFromDB(FORMS_FILES,uuid as string);
+        const filteredFiles:FormFile[] = files.filter((f) => f.id !== file.id);
+        await setInDB(FORMS_FILES,uuid as string, [...filteredFiles]);
     };
 
     if (!form) {
@@ -113,6 +124,7 @@ const FormPage: React.FC = () => {
                     enableForwardSkip={true}
                     getFile={onGetFile}
                     onFileUpload={onFileUpload}
+                    onFileDelete={onFileDelete}
                 ></SForms>
 
             </Container>

@@ -16,11 +16,11 @@ const RecordCardItem:React.FC<CardProps> = (props) => {
                     {record?.localName}
                 </Card.Title>
                 <Card.Text>{record?.formTemplate}</Card.Text>
-                <Card.Text>Author: {record?.author.firstName} {record?.author?.lastName}</Card.Text>
+                <Card.Text>Author: {record?.author?.firstName} {record?.author?.lastName}</Card.Text>
                 <Card.Text>Date
-                    Created: {new Date(record?.dateCreated).toLocaleString()}</Card.Text>
+                    Created: {new Date(record?.dateCreated ?? '').toLocaleString()}</Card.Text>
                 <Card.Text>Last
-                    Modified: {new Date(record?.lastModified).toLocaleString()}</Card.Text>
+                    Modified: {new Date(record?.lastModified ?? '').toLocaleString()}</Card.Text>
                 <Card.Text>Last Modified
                     By: {record?.lastModifiedBy?.firstName} {record?.lastModifiedBy?.lastName}</Card.Text>
                 <Card.Text>Institution: {record?.institution?.name}</Card.Text>

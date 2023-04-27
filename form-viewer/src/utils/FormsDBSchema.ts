@@ -3,25 +3,29 @@ import Priority from "./PriorityEnum";
 
 export default interface FormsDBSchema extends DBSchema {
     'form-metadata': {
-        key: string;
+        key: IDBValidKey;
         value: FormMetadata;
     };
     'form-data': {
-        key: string;
+        key: IDBValidKey;
         value: FormDataContent;
     };
     'form-record':{
-      key:string;
+      key:IDBValidKey;
       value: FormRecord;
     };
     'form-file':{
-        key:string;
+        key:IDBValidKey;
         value:Array<FormFile>;
+    }
+    'user-credentials':{
+        key:IDBValidKey;
+        value:Author;
     }
 };
 
 export type FormsDBRecord<K extends keyof FormsDBSchema> = {
-    key: string;
+    key: IDBValidKey;
     value: FormsDBSchema[K]['value'];
 };
 
@@ -32,24 +36,24 @@ export interface FormDataContent {
 export interface FormMetadata {
     dataKey: string;
     priority?: Priority;
-    name?:string;
+    name:string;
     tags?:string[];
     description?:string;
     lastServerUpload?:number;
-    downloadDate:number;
+    downloadDate?:number;
     wasUpdated:boolean;
 }
 export interface FormRecord {
-    uri: string;
-    key: string;
-    formTemplate: string;
+    uri?: string;
+    key?: string;
+    formTemplate?: string;
     localName: string;
-    author: Author;
-    dateCreated: number;
-    lastModified: number;
-    lastModifiedBy: Author;
-    institution: Institution;
-    question:Question;
+    author?: Author;
+    dateCreated?: number;
+    lastModified?: number;
+    lastModifiedBy?: Author;
+    institution?: Institution;
+    question?:Question;
 }
 
 export interface Question{

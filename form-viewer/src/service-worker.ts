@@ -13,7 +13,7 @@ import {ExpirationPlugin} from 'workbox-expiration';
 import {precacheAndRoute, createHandlerBoundToURL} from 'workbox-precaching';
 import {registerRoute} from 'workbox-routing';
 import {StaleWhileRevalidate} from 'workbox-strategies';
-import {LOGIN_URL, USER_CREDS_URL} from "./constants/ApiConstants";
+// import {LOGIN_URL, USER_CREDS_URL} from "./constants/ApiConstants";
 
 declare const self: ServiceWorkerGlobalScope;
 
@@ -80,40 +80,15 @@ self.addEventListener('message', (event) => {
 });
 
 // Any other custom service worker logic can go here.
-registerRoute(LOGIN_URL, new StaleWhileRevalidate({
-    cacheName: 'login-creds-cache',
-    plugins: [new ExpirationPlugin({maxAgeSeconds: 60 * 15})]
-}));
+// registerRoute(LOGIN_URL, new StaleWhileRevalidate({
+//     cacheName: 'login-creds-cache',
+//     plugins: [new ExpirationPlugin({maxAgeSeconds: 60 * 30})]
+// }),'POST');
 registerRoute(({url}) =>
         url.pathname.includes('possibleValues')
     , new StaleWhileRevalidate({cacheName: 'forms-possible-values'}));
 
-registerRoute(USER_CREDS_URL, new StaleWhileRevalidate({
-    cacheName: 'login-creds-cache',
-    plugins: [new ExpirationPlugin({maxAgeSeconds: 60 * 30})]
-}));
-// registerRoute(({url}) => {
-//     console.log(url);
-//     console.log(url.pathname.includes('possibleValues'))
-//     return url.pathname.includes('possibleValues');
-//     },//@ts-ignore
-//     (e) => {console.log(e)});
-
-// self.addEventListener('fetch', function (event) {
-//     console.log(event);
-//     event.respondWith(
-//         caches.open('forms-possible-values').then(function (cache) {
-//             return cache.match(event.request).then(function (response) {
-//                 return (
-//                     response ||
-//                     fetch(event.request).then(function (response) {
-//                         if(response.url.includes('possibleValues?')){
-//                             cache.put(event.request, response.clone());
-//                         }
-//                         return response;
-//                     })
-//                 );
-//             });
-//         }),
-//     );
-// });
+// registerRoute(USER_CREDS_URL, new StaleWhileRevalidate({
+//     cacheName: 'login-creds-cache',
+//     plugins: [new ExpirationPlugin({maxAgeSeconds: 60 * 30})]
+// }));

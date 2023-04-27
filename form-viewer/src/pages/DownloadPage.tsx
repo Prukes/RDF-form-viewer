@@ -9,9 +9,12 @@ import {Alert, Button, Col, Container, Row, Toast} from "react-bootstrap";
 import Layout from "../components/Layout";
 import Priority from "../utils/PriorityEnum";
 import RoutingConstants from "../constants/RoutingConstants";
-import {apiService} from "../utils/apiService";
+import {apiService} from "../utils/ApiService";
 import axios from "axios";
-import RecordCardItem from "../components/download/RecordCardItem";
+import ToastComponent from "../components/toasts/ToastComponent";
+import FormDownloadTab from "../components/download/FormDownloadTab";
+import RecordDownloadTab from "../components/download/RecordDownloadTab";
+import 'react-tabs/style/react-tabs.css';
 
 
 const headers = {
@@ -24,16 +27,29 @@ const DownloadPage: React.FC = () => {
     const [isDownloadingDropdown, setIsDownloadingDropdown] = useState(false);
     const [records, setRecords] = useState<FormRecord[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>("");
-    const [importedData, setImportedData] = useState<any>(null);
     const navigation = useNavigate();
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [showToast, setToast] = useState(false)
+    const [showSuccessToast, setShowSuccessToast] = useState(false);
+    const [showErrorToast, setShowErrorToast] = useState(false);
+    const [needsAuthentization, setNeedsAuthentization] = useState(false);
+    const [tabIndex, setTabIndex] = useState(0);
+
+    const tabs = [
+        {
+            id: 0,
+            tabTitle: "Forms"
+        },
+        {
+            id: 1,
+            tabTitle: "Records"
+        }
+    ];
 
 
     useEffect(() => {
         console.log(selectedForms);
 
-    },[selectedForms]);
+    }, [selectedForms]);
 
     useEffect(() => {
         const fetchRecords = async () => {
@@ -44,25 +60,25 @@ const DownloadPage: React.FC = () => {
                     setIsLoading(false);
                 }
             } catch (error) {
-                if( axios.isAxiosError(error)){
+                if (axios.isAxiosError(error)) {
                     if (error.response) {
                         // Request made but the server responded with an error
-                        if(error.response.status == 500){
+                        if (error.response.status == 500) {
                             console.error(error);
                             setErrorMessage('Internal server error. ' + error);
-                            navigation(RoutingConstants.LOGIN);
+                            setNeedsAuthentization(true);
                         }
-
+                        // Request made but the server did not respond
                     } else if (error.request) {
                         setErrorMessage('Server was unreachable. Please try again later or use the import.');
                     } else {
                         // Error occured while setting up the request
                     }
+                    setIsDownloadingForm(false);
                 } else {
                     console.error(error);
                     setIsDownloadingForm(false);
                     setErrorMessage('Something went wrong...');
-                    console.error(error);
                 }
                 setIsLoading(false);
             }
@@ -88,7 +104,7 @@ const DownloadPage: React.FC = () => {
                 priority: Priority.MEDIUM,
                 description: formRecord.formTemplate,
                 downloadDate: Date.now(),
-                wasUpdated:false
+                wasUpdated: false
             };
             // console.log(response?.data);
             await setInDB(FORMS_DATA_STORE, formDataKey, resData);
@@ -98,16 +114,16 @@ const DownloadPage: React.FC = () => {
             setIsDownloadingForm(false);
 
             await downloadPossibleValues(resData);
-        } catch(e){
+        } catch (e) {
             console.error(e);
             setErrorMessage(`Ooops, something went wrong while downloading form ${formRecord.localName}`);
             setIsDownloadingForm(false);
-            navigation('/login');
+            setNeedsAuthentization(true);
             return;
         }
     };
 
-    const downloadPossibleValues = async (formResponse:any) => {
+    const downloadPossibleValues = async (formResponse: any) => {
         setIsDownloadingDropdown(true);
 
         const FORM_GEN_POSSIBLE_VALUES_URL = `${API_URL}/rest/formGen/possibleValues`;
@@ -117,7 +133,7 @@ const DownloadPage: React.FC = () => {
                 await apiService.get(FORM_GEN_POSSIBLE_VALUES_URL, {params: {query: query}});
             }
         }
-
+        setShowSuccessToast(true);
         setIsDownloadingDropdown(false);
     }
 
@@ -125,38 +141,6 @@ const DownloadPage: React.FC = () => {
         navigation(-1);
     }
 
-    const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (!file) {
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = () => {
-            try {
-                const data = JSON.parse(reader.result as string);
-                setImportedData(data);
-                setErrorMessage("");
-            } catch (error) {
-                setErrorMessage("Error parsing JSON file.");
-            }
-        };
-        reader.readAsText(file);
-    };
-
-    const handleSaveToIndexedDB = async () => {
-        try {
-            const formDataKey = uuidv4();
-            const formMetadata: FormMetadata = {dataKey: formDataKey, wasUpdated: false, downloadDate:Date.now(), priority: Priority.MEDIUM};
-            await setInDB(FORMS_DATA_STORE, formDataKey, importedData);
-            await setInDB(FORMS_METADATA_STORE, uuidv4(), formMetadata);
-            setToast(true);
-
-        } catch (e: any) {
-            setErrorMessage(e);
-        }
-        setImportedData(null);
-    };
 
     const handleBatchDownload = async () => {
         const formsCopy = [...selectedForms];
@@ -168,7 +152,7 @@ const DownloadPage: React.FC = () => {
                 await downloadRecord(formsCopy[formIndex]);
                 formsCopy.splice(formIndex, 1);
                 len--;
-            } catch(e){
+            } catch (e) {
                 console.error('caught in batch download');
                 setSelectedForms(formsCopy);
                 return;
@@ -188,6 +172,9 @@ const DownloadPage: React.FC = () => {
 
 
     };
+    const handleTabClick = (index:number) => {
+        setTabIndex(index);
+    };
 
     const specialButton: ReactNode =
         <>
@@ -195,30 +182,60 @@ const DownloadPage: React.FC = () => {
                 <Button variant="success" onClick={() => handleBatchDownload()}>
                     Batch download
                 </Button>
-                : !importedData ?
-                    <>
-                        <input
-                            id={"import-form-input"}
-                            type="file"
-                            accept=".json"
-                            onChange={handleFileSelect}
-                            style={{display: "none"}}
-                        />
-                        <Button variant="primary" onClick={() => document.getElementById("import-form-input")?.click()}>
-                            Import JSON file
-                        </Button>
-                    </>
-                    :
-                    <Button variant="success" onClick={() => handleSaveToIndexedDB()}>
-                        Save to IndexedDB
-                    </Button>
+                : <Button variant="success" onClick={() => navigation(RoutingConstants.IMPORT_FORM)}>
+                    Import form
+                </Button>
             }
         </>;
 
     const isDownloading = isDownloadingDropdown || isDownloadingForm;
 
+    if (needsAuthentization) {
+        return (
+            <Layout onClickBack={handleClickBack} title={"Download page"} specialButton={specialButton}>
+                <Container fluid className={'justify-content-center'}>
+                    <Alert variant="danger" dismissible onClose={() => setNeedsAuthentization(false)}>
+                        <Alert.Heading>Error!</Alert.Heading>
+                        <p>
+                            User needs to authenticate. Importing a form is also an option :).
+                        </p>
+                        <Alert.Link>
+                            <Button variant={'primary'} onClick={() => {
+                                navigation(RoutingConstants.LOGIN)
+                            }}>Login!</Button>
+                        </Alert.Link>
+                    </Alert>
+                </Container>
+            </Layout>
+        );
+    }
+
+    if (isDownloading) {
+        return (
+            <Layout onClickBack={handleClickBack} title={"Download page"} specialButton={specialButton}
+                    isLoading={isLoading}>
+                <div>
+                    <h1>Download Form</h1>
+                    <p>Downloading form or dropdown values...</p>
+
+                    <Link to={RoutingConstants.DASHBOARD}>Back to Dashboard</Link>
+                </div>
+
+            </Layout>
+        );
+    }
+
+
     return (
-        <Layout onClickBack={handleClickBack} title={"Download page"} specialButton={specialButton} isLoading={isLoading}>
+        <Layout onClickBack={handleClickBack} title={"Download page"} specialButton={specialButton}
+                isLoading={isLoading}>
+            <ToastComponent show={showSuccessToast} title={'Popiči'} type={'success'} delay={4000}
+                            message={'Task failed unsuccessfully'} onHide={() => setShowSuccessToast(false)}
+                            position={'top-center'}></ToastComponent>
+            <ToastComponent show={showErrorToast} title={'Yikers'} type={'error'} delay={4000}
+                            message={'Task failed successfully'} onHide={() => setShowErrorToast(false)}
+                            position={'top-center'}></ToastComponent>
+
             {errorMessage &&
                 <Container fluid className={'justify-content-center'}>
                     <Alert variant="danger" dismissible onClose={() => setErrorMessage('')}>
@@ -229,44 +246,25 @@ const DownloadPage: React.FC = () => {
                     </Alert>
                 </Container>
             }
-            {!isDownloading ?
-
-                <Container fluid style={{paddingBottom: '3.5rem'}}>
-                    {selectedForms.map(form => {
-                        return <p>{`${form.localName} key: ${form.key}`}</p>
-                    })}
-                    {records.map((record) => (
-                        <Row key={record?.key} className={"my-2"}>
-                            <Col xs={12}>
-                                <RecordCardItem key={record?.key} record={record} downloadRecord={downloadRecord} checkboxChanged={checkboxChanged}/>
-                            </Col>
-                        </Row>
-                    ))}
-                </Container> :
-                <div>
-                    <h1>Download Form</h1>
-                    <p>Downloading form or dropdown values...</p>
-
-                    <Link to={RoutingConstants.DASHBOARD}>Back to Dashboard</Link>
-                </div>
-            }
-            <Toast style={{alignSelf:"bottom"}}
-                onClose={() => setToast(false)}
-                autohide
-                show={showToast}
-                delay={2200}
-            >
-                <Toast.Header>
-                    <strong className="mr-auto">React Toast</strong>
-                    <small>50 mins ago</small>
-                </Toast.Header>
-                <Toast.Body>Lorem ipsum dolor sit adipiscing elit.</Toast.Body>
-            </Toast>
+            <Container fluid className={"position-relative"}>
+                <Container >
+                    {
+                        tabIndex === 0 ?
+                            <FormDownloadTab></FormDownloadTab> :
+                            <RecordDownloadTab records={records} downloadRecord={downloadRecord} checkboxChanged={checkboxChanged}></RecordDownloadTab>
+                    }
+                </Container>
+                <Row className={"position-fixed bottom-0 w-100 justify-content-between"} style={{paddingBottom:"3.5rem"}}>
+                    {
+                        tabs.map((tab, i) =>
+                            <Button key={i} id={`${tab.id}`} disabled={tabIndex === tab.id} onClick={() => handleTabClick(tab.id)}>{tab.tabTitle}</Button>
+                        )
+                    }
+                </Row>
+            </Container>
         </Layout>
 
     );
-
-
 };
 
 export default DownloadPage;

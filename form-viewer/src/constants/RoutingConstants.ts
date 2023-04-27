@@ -6,7 +6,8 @@ const RoutingConstants = {
     REQUESTS: "/requests",
     LOGIN: "/login",
     FORM: "/form",
-    EDIT_FORM:"/edit"
+    EDIT_FORM:"/edit",
+    IMPORT_FORM:"/import"
 };
 
 export default RoutingConstants;

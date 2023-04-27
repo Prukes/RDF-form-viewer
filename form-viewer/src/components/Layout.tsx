@@ -17,11 +17,11 @@ const styles = {
 
 const Layout: React.FC<LayoutProps> = (props) => {
     return (
-        <Container fluid style={styles.content}>
+        <Container fluid style={styles.content} className={'mw-100 mh-100'}>
             {
                 props.isLoading ?
                     <Container fluid className="justify-content-md-center">
-                        <Spinner ></Spinner>
+                        <Spinner />
                     </Container>
                     :
                     props.children
