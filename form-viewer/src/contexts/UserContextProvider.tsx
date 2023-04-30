@@ -1,4 +1,4 @@
-import React, {createContext, ReactNode, useMemo, useState} from 'react';
+import React, {createContext, ReactNode, useEffect, useMemo, useState} from 'react';
 import {Author} from "../utils/FormsDBSchema";
 interface AuthContextType {
     authUser: Author | null;
@@ -14,6 +14,10 @@ type AuthContextProviderProps ={
 }
 const AuthContextProvider: React.FC<AuthContextProviderProps> = (props) => {
     const [authUser, setAuthUser] = useState<Author | null>(null);
+
+    useEffect(() => {
+
+    },[]);
 
     const value = useMemo(() => ({
         authUser, setAuthUser

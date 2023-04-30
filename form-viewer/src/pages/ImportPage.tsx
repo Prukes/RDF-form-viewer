@@ -4,17 +4,16 @@ import {Button, Form} from "react-bootstrap";
 import Layout from "../components/Layout";
 import {v4 as uuidv4} from "uuid";
 import {FormMetadata, FormRecord} from "../utils/FormsDBSchema";
-import Priority from "../utils/PriorityEnum";
 import {setInDB} from "../services/DBService";
 import {FORMS_DATA_STORE, FORMS_METADATA_STORE, FORMS_RECORDS_STORE} from "../constants/DatabaseConstants";
 import ToastComponent from "../components/toasts/ToastComponent";
 import {useNavigate} from "react-router-dom";
+import {checkData, createNewMetadata, createNewRecord, renameEdges} from "../utils/Utils";
+import jsonld from "jsonld";
+import CONTEXT_CONSTANT from "../constants/FormContext";
+import {FormData} from '../types/Types';
 
-type FormData = {
-    name: string;
-    template: string;
-    file: FileList;
-};
+
 
 const ImportPage: React.FC = () => {
     const {register, handleSubmit, formState: {errors}} = useForm<FormData>();
@@ -41,24 +40,23 @@ const ImportPage: React.FC = () => {
         reader.readAsText(file);
     };
 
-    const handleSaveToIndexedDB = async (jsonData: string, data: FormData) => {
+    const handleSaveToIndexedDB = async (jsonData: Object, data: FormData) => {
         try {
             const dateCreated = Date.now()
-            const formDataKey = uuidv4();
-            const formMetadata: FormMetadata = {
-                dataKey: formDataKey,
-                wasUpdated: false,
-                downloadDate: dateCreated,
-                priority: Priority.MEDIUM,
-                name: data.name
-            };
-            const formRecord: FormRecord = {
-                localName: data.name,
-                dateCreated: dateCreated,
-            };
-            await setInDB(FORMS_DATA_STORE, formDataKey, jsonData);
+            const formMetadata: FormMetadata = createNewMetadata(data.name, dateCreated);
+            const formRecord: FormRecord = createNewRecord();
+            formRecord.localName = data.name;
+            formRecord.formTemplate = data.template;
+            console.log(jsonData);
+            const flattenedData = await jsonld.flatten(jsonData, CONTEXT_CONSTANT);
+            const nameMap = {};
+            checkData(flattenedData,nameMap);
+            renameEdges(flattenedData, nameMap);
+            console.log(flattenedData);
+
             await setInDB(FORMS_METADATA_STORE, uuidv4(), formMetadata);
-            await setInDB(FORMS_RECORDS_STORE, formDataKey, formRecord);
+            await setInDB(FORMS_RECORDS_STORE, formMetadata.dataKey, formRecord);
+            await setInDB(FORMS_DATA_STORE, formMetadata.dataKey, flattenedData);
 
         } catch (e: any) {
             setErrorMessage(e);
@@ -69,7 +67,7 @@ const ImportPage: React.FC = () => {
 
     return (
         <Layout title={'Import page'} onClickBack={() => navigation(-1)}>
-            <ToastComponent message={'Great success'} title={'Success'} type={'Success'} show={showSuccessToast}
+            <ToastComponent message={'Form was successfully imported!'} title={'Success'} type={'Success'} show={showSuccessToast}
                             position={'bottom-center'} delay={2000} onHide={() => {
                 setShowSuccessToast(false)
             }}></ToastComponent>

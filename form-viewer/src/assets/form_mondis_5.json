@@ -129,7 +129,6 @@
         "ulice-2436",
         "slo-popisn-9632"
       ],
-      "has-preceding-question": "file-111",
       "has-layout-class": "section",
       "description": {
         "@language": "cs",
@@ -145,9 +144,7 @@
       "@type": "doc:question",
       "has_related_question": [],
       "has-layout-class": "type-ahead",
-      "has-possible-value": {
-        "@id": "option-5225431"
-      },
+      "has-possible-value": {},
       "has-preceding-question": "file-111",
       "label": {
         "@language": "cs",
@@ -236,17 +233,7 @@
       "@type": "doc:question",
       "has_related_question": [],
       "has-layout-class": "type-ahead",
-      "has-possible-value": [
-        {
-          "@id": "option-1390400"
-        },
-        {
-          "@id": "option-6714167"
-        },
-        {
-          "@id": "option-6707602"
-        }
-      ],
+      "has-possible-value": [],
       "label": {
         "@language": "cs",
         "@value": "Druh"
@@ -335,17 +322,7 @@
       "@type": "doc:question",
       "has_related_question": [],
       "has-layout-class": "type-ahead",
-      "has-possible-value": [
-        {
-          "@id": "option-1390400"
-        },
-        {
-          "@id": "option-6714167"
-        },
-        {
-          "@id": "option-6707602"
-        }
-      ],
+      "has-possible-value": [],
       "label": {
         "@language": "cs",
         "@value": "Druh"
@@ -422,17 +399,7 @@
       "@type": "doc:question",
       "has_related_question": [],
       "has-layout-class": "type-ahead",
-      "has-possible-value": [
-        {
-          "@id": "option-1390400"
-        },
-        {
-          "@id": "option-6714167"
-        },
-        {
-          "@id": "option-6707602"
-        }
-      ],
+      "has-possible-value": [],
       "label": {
         "@language": "cs",
         "@value": "Druh"
@@ -654,17 +621,7 @@
       "@type": "doc:question",
       "has_related_question": [],
       "has-layout-class": "type-ahead",
-      "has-possible-value": [
-        {
-          "@id": "option-6933353"
-        },
-        {
-          "@id": "option-351616"
-        },
-        {
-          "@id": "option-9959006"
-        }
-      ],
+      "has-possible-value": [],
       "label": {
         "@language": "cs",
         "@value": "Druh"
@@ -697,17 +654,7 @@
       "@type": "doc:question",
       "has_related_question": [],
       "has-layout-class": "type-ahead",
-      "has-possible-value": [
-        {
-          "@id": "option-1390400"
-        },
-        {
-          "@id": "option-6714167"
-        },
-        {
-          "@id": "option-6707602"
-        }
-      ],
+      "has-possible-value": [],
       "label": {
         "@language": "cs",
         "@value": "Druh"
@@ -729,17 +676,7 @@
       "@type": "doc:question",
       "has_related_question": [],
       "has-layout-class": "type-ahead",
-      "has-possible-value": [
-        {
-          "@id": "option-1390400"
-        },
-        {
-          "@id": "option-6714167"
-        },
-        {
-          "@id": "option-6707602"
-        }
-      ],
+      "has-possible-value": [],
       "label": {
         "@language": "cs",
         "@value": "Druh"
@@ -1084,9 +1021,7 @@
       "@type": "doc:question",
       "has_related_question": [],
       "has-layout-class": "type-ahead",
-      "has-possible-value": {
-        "@id": "option-2518852"
-      },
+      "has-possible-value": {},
       "label": {
         "@language": "cs",
         "@value": "Konstrukční typ"
@@ -1572,29 +1507,7 @@
       "@type": "doc:question",
       "has_related_question": [],
       "has-layout-class": "type-ahead",
-      "has-possible-value": [
-        {
-          "@id": "option-4433870"
-        },
-        {
-          "@id": "option-1544010"
-        },
-        {
-          "@id": "option-7764584"
-        },
-        {
-          "@id": "option-7229566"
-        },
-        {
-          "@id": "option-4341254"
-        },
-        {
-          "@id": "option-3238027"
-        },
-        {
-          "@id": "option-700813"
-        }
-      ],
+      "has-possible-value": [],
       "has-preceding-question": "projev-po-kozen-9054",
       "label": {
         "@language": "cs",
@@ -2401,185 +2314,6 @@
       "label": {
         "@language": "cs",
         "@value": "Omítka"
-      }
-    },
-    {
-      "@id": "option-1390400",
-      "label": {
-        "@language": "cs",
-        "@value": "Klenutý otvor"
-      }
-    },
-    {
-      "@id": "option-1544010",
-      "label": {
-        "@language": "cs",
-        "@value": "Sklo"
-      }
-    },
-    {
-      "@id": "option-2355429",
-      "label": {
-        "@language": "cs",
-        "@value": "Transformace MoD"
-      }
-    },
-    {
-      "@id": "option-2426242",
-      "label": {
-        "@language": "cs",
-        "@value": "Deformace"
-      }
-    },
-    {
-      "@id": "option-2518852",
-      "label": {
-        "@language": "cs",
-        "@value": "Neviem"
-      }
-    },
-    {
-      "@id": "option-3238027",
-      "label": {
-        "@language": "cs",
-        "@value": "Kámen"
-      }
-    },
-    {
-      "@id": "option-3501140",
-      "label": {
-        "@language": "cs",
-        "@value": "Kolaps"
-      }
-    },
-    {
-      "@id": "option-351616",
-      "label": {
-        "@language": "cs",
-        "@value": "Arkýř"
-      }
-    },
-    {
-      "@id": "option-3753302",
-      "label": {
-        "@language": "cs",
-        "@value": "Odbarvení"
-      }
-    },
-    {
-      "@id": "option-4282613",
-      "label": {
-        "@language": "cs",
-        "@value": "Materiální ztráty"
-      }
-    },
-    {
-      "@id": "option-4341254",
-      "label": {
-        "@language": "cs",
-        "@value": "Malta"
-      }
-    },
-    {
-      "@id": "option-4433870",
-      "label": {
-        "@language": "cs",
-        "@value": "Pálená hlína"
-      }
-    },
-    {
-      "@id": "option-5225431",
-      "label": {
-        "@language": "cs",
-        "@value": ""
-      }
-    },
-    {
-      "@id": "option-5452039",
-      "label": {
-        "@language": "cs",
-        "@value": "Biologická kolonizace"
-      }
-    },
-    {
-      "@id": "option-5807954",
-      "label": {
-        "@language": "cs",
-        "@value": "Prasklina"
-      }
-    },
-    {
-      "@id": "option-5930663",
-      "label": {
-        "@language": "cs",
-        "@value": "Rotace"
-      }
-    },
-    {
-      "@id": "option-6532618",
-      "label": {
-        "@language": "cs",
-        "@value": "Přemístění"
-      }
-    },
-    {
-      "@id": "option-6707602",
-      "label": {
-        "@language": "cs",
-        "@value": "Obdélníkový otvor"
-      }
-    },
-    {
-      "@id": "option-6714167",
-      "label": {
-        "@language": "cs",
-        "@value": "Kruhový otvor"
-      }
-    },
-    {
-      "@id": "option-6933353",
-      "label": {
-        "@language": "cs",
-        "@value": "Balkón"
-      }
-    },
-    {
-      "@id": "option-700813",
-      "label": {
-        "@language": "cs",
-        "@value": "Dřevo"
-      }
-    },
-    {
-      "@id": "option-7229566",
-      "label": {
-        "@language": "cs",
-        "@value": "Kov"
-      }
-    },
-    {
-      "@id": "option-7764584",
-      "label": {
-        "@language": "cs",
-        "@value": "Zdivo"
-      }
-    },
-    {
-      "@id": "option-8956604",
-      "label": {
-        "@language": "cs",
-        "@value": "Placeholder"
-      }
-    },
-    {
-      "@id": "option-9276123",
-      "label": []
-    },
-    {
-      "@id": "option-9959006",
-      "label": {
-        "@language": "cs",
-        "@value": "Vnitřní dvorek"
       }
     },
     {
@@ -3669,35 +3403,7 @@
       "@type": "doc:question",
       "has_related_question": [],
       "has-layout-class": "type-ahead",
-      "has-possible-value": [
-        {
-          "@id": "option-5452039"
-        },
-        {
-          "@id": "option-3501140"
-        },
-        {
-          "@id": "option-5807954"
-        },
-        {
-          "@id": "option-2426242"
-        },
-        {
-          "@id": "option-3753302"
-        },
-        {
-          "@id": "option-6532618"
-        },
-        {
-          "@id": "option-4282613"
-        },
-        {
-          "@id": "option-5930663"
-        },
-        {
-          "@id": "option-2355429"
-        }
-      ],
+      "has-possible-value": [],
       "label": {
         "@language": "cs",
         "@value": "Projev poškození"
@@ -4087,9 +3793,7 @@
       "@type": "doc:question",
       "has_related_question": [],
       "has-layout-class": "type-ahead",
-      "has-possible-value": {
-        "@id": "option-8956604"
-      },
+      "has-possible-value": {},
       "label": {
         "@language": "cs",
         "@value": "Strukturní typ"
@@ -4210,9 +3914,7 @@
         "materi-l-2943"
       ],
       "has-layout-class": "section",
-      "has-possible-value": {
-        "@id": "option-9276123"
-      },
+      "has-possible-value": {},
       "has-preceding-question": "materi-l-5604",
       "label": {
         "@language": "cs",
@@ -4227,9 +3929,7 @@
         "materi-l-106"
       ],
       "has-layout-class": "section",
-      "has-possible-value": {
-        "@id": "option-9276123"
-      },
+      "has-possible-value": {},
       "has-preceding-question": "materi-l-8959",
       "label": {
         "@language": "cs",

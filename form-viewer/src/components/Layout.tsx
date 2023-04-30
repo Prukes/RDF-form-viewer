@@ -1,14 +1,9 @@
-import React, {ReactNode} from 'react';
+import React from 'react';
 import {Container, Navbar, Nav, Button, Spinner} from 'react-bootstrap';
 import {BsArrowLeft} from "react-icons/bs";
+import {LayoutProps} from "../types/Types";
 
-type LayoutProps = {
-    onClickBack?: React.MouseEventHandler<HTMLButtonElement> | undefined;
-    children: ReactNode;
-    title: string;
-    specialButton?: ReactNode;
-    isLoading?: boolean;
-};
+
 const styles = {
     content: {
         paddingBottom: '3.5rem', // Height of the navbar
@@ -20,7 +15,7 @@ const Layout: React.FC<LayoutProps> = (props) => {
         <Container fluid style={styles.content} className={'mw-100 mh-100'}>
             {
                 props.isLoading ?
-                    <Container fluid className="justify-content-md-center">
+                    <Container fluid className="d-flex justify-content-center">
                         <Spinner />
                     </Container>
                     :

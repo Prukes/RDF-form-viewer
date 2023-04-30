@@ -1,19 +1,11 @@
 import {Toast, ToastContainer} from "react-bootstrap";
 import React from "react";
-import { FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
-import {ToastPosition} from "react-bootstrap/ToastContainer";
+import {FaCheckCircle, FaExclamationCircle} from 'react-icons/fa';
+import {ToastProps} from "../../types/Types";
 
-type ToastProps = {
-    message:string,
-    title: string,
-    type: string,
-    show: boolean,
-    onHide?: Function,
-    position?: ToastPosition,
-    delay?: number
-}
+
 const ToastComponent: React.FC<ToastProps> = (props) => {
-    const autohide = props.delay != null ||props.delay != undefined;
+    const autohide = !!props.delay;
 
     const handleHideToast = () => {
         if (props.onHide) {
@@ -23,13 +15,14 @@ const ToastComponent: React.FC<ToastProps> = (props) => {
 
     const getIcon = () => {
         if (props.type === 'success') {
-            return <FaCheckCircle />;
+            return <FaCheckCircle/>;
         } else if (props.type === 'error') {
-            return <FaExclamationCircle />;
+            return <FaExclamationCircle/>;
         } else {
             return null;
         }
     };
+
 
     return (
         <ToastContainer className="p-3" position={props.position}>
@@ -38,7 +31,12 @@ const ToastComponent: React.FC<ToastProps> = (props) => {
                     {getIcon()}
                     <strong className="me-auto">{props.title}</strong>
                 </Toast.Header>
-                <Toast.Body>{props.message}</Toast.Body>
+                <Toast.Body>
+                    <>
+                        <p>{props.message}</p>
+                        <div>{props.extra}</div>
+                    </>
+                </Toast.Body>
             </Toast>
         </ToastContainer>
 

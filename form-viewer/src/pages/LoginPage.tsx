@@ -7,17 +7,15 @@ import {useNavigate} from "react-router-dom";
 import Layout from "../components/Layout";
 import {apiService} from "../utils/ApiService";
 import {AuthContext} from "../contexts/UserContextProvider";
+import {LoginData, LoginInputs} from "../types/Types";
 
-type Inputs = {
-    username: string,
-    password: string,
-};
+
 const LoginPage = () => {
-    const { register, handleSubmit, setError, formState: {errors} } = useForm<Inputs>();
+    const { register, handleSubmit, setError, formState: {errors} } = useForm<LoginInputs>();
     const navigation = useNavigate();
     const authContext = useContext(AuthContext);
 
-    const onSubmit = async (data:Inputs) => {
+    const onSubmit = async (data:LoginInputs) => {
         const username = data.username;
         const password = data.password;
         console.log(username, password);
@@ -25,7 +23,10 @@ const LoginPage = () => {
         if (username && password) {
             const responseLogin = await apiService.post(LOGIN_URL, `username=${username}&password=${password}`);
             console.log(responseLogin);
-            if (responseLogin.status !== 200){
+            const data: LoginData = responseLogin.data;
+
+            if (responseLogin.status !== 200 && !data.loggedIn){
+
                 console.error('Oopsie', responseLogin.data);
                 setError('root',responseLogin.data);
             }

@@ -2,7 +2,7 @@ import {openDB, IDBPDatabase, StoreNames} from 'idb';
 import {
     FORMS_DATA_STORE,
     FORMS_DB,
-    FORMS_FILES,
+    FORMS_FILES_STORE,
     FORMS_METADATA_STORE,
     FORMS_RECORDS_STORE, USER_CREDS
 } from "../constants/DatabaseConstants";
@@ -24,7 +24,7 @@ async function openDatabase(): Promise<IDBPDatabase<FormsDBSchema>> {
             db.createObjectStore(FORMS_DATA_STORE);
             db.createObjectStore(FORMS_METADATA_STORE);
             db.createObjectStore(FORMS_RECORDS_STORE);
-            db.createObjectStore(FORMS_FILES);
+            db.createObjectStore(FORMS_FILES_STORE);
             db.createObjectStore(USER_CREDS,{keyPath:'uri'});
         },
     });

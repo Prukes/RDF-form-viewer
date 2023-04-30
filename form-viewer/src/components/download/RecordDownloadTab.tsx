@@ -3,19 +3,24 @@ import {Col, Container, Row} from "react-bootstrap";
 // @ts-ignore
 import JsonLdUtils from "jsonld-utils";
 import RecordCardItem from "./RecordCardItem";
-import {FormRecord} from "../../utils/FormsDBSchema";
+import {FormDownloadComponentProps} from "../../types/Types";
 
-type FormDownloadComponentProps = {
-    records: FormRecord[];
-    downloadRecord: Function;
-    checkboxChanged: Function;
-}
+
 
 const RecordDownloadTab: React.FC<FormDownloadComponentProps> = props => {
 
 
+    if(!props.records.length){
+        return(
+            <Container>
+                <h1 className={'text-center'}>
+                    No records to download or no connection
+                </h1>
+            </Container>
+        );
+    }
     return (
-            <Container fluid style={{paddingBottom: '3.5rem'}}>s
+            <Container fluid style={{paddingBottom: '3.5rem'}}>
                 {props.records.map((record) => (
                     <Row key={record?.key} className={"my-2"}>
                         <Col xs={12}>
@@ -25,7 +30,6 @@ const RecordDownloadTab: React.FC<FormDownloadComponentProps> = props => {
                     </Row>
                 ))}
             </Container>
-
     );
 };
 

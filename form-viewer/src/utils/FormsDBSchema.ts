@@ -42,6 +42,7 @@ export interface FormMetadata {
     lastServerUpload?:number;
     downloadDate?:number;
     wasUpdated:boolean;
+    hasRecord: boolean;
 }
 export interface FormRecord {
     uri?: string;
@@ -68,6 +69,7 @@ export interface Answer{
     codeValue:string;
     origin:string;
     types:string[];
+    uri?: string;
 }
 
 export interface Author {

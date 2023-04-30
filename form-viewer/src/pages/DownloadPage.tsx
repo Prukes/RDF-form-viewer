@@ -1,11 +1,11 @@
 import React, {ReactNode, useEffect, useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
-import {API_URL} from "../constants/ApiConstants";
+import {useNavigate} from 'react-router-dom';
+import {API_URL, FORM_GEN_URL} from "../constants/ApiConstants";
 import {v4 as uuidv4} from 'uuid';
 import {FORMS_DATA_STORE, FORMS_METADATA_STORE, FORMS_RECORDS_STORE} from "../constants/DatabaseConstants";
 import {setInDB} from "../services/DBService";
-import {FormMetadata, FormRecord} from "../utils/FormsDBSchema";
-import {Alert, Button, Col, Container, Row, Toast} from "react-bootstrap";
+import {FormDataContent, FormMetadata, FormRecord} from "../utils/FormsDBSchema";
+import {Alert, Button, Container} from "react-bootstrap";
 import Layout from "../components/Layout";
 import Priority from "../utils/PriorityEnum";
 import RoutingConstants from "../constants/RoutingConstants";
@@ -14,7 +14,8 @@ import axios from "axios";
 import ToastComponent from "../components/toasts/ToastComponent";
 import FormDownloadTab from "../components/download/FormDownloadTab";
 import RecordDownloadTab from "../components/download/RecordDownloadTab";
-import 'react-tabs/style/react-tabs.css';
+import {createNewMetadata, createNewRecord} from "../utils/Utils";
+import {FormDownloadInputs} from "../types/Types";
 
 
 const headers = {
@@ -23,8 +24,6 @@ const headers = {
 
 const DownloadPage: React.FC = () => {
     const [selectedForms, setSelectedForms] = useState<FormRecord[]>([]);
-    const [isDownloadingForm, setIsDownloadingForm] = useState(false);
-    const [isDownloadingDropdown, setIsDownloadingDropdown] = useState(false);
     const [records, setRecords] = useState<FormRecord[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>("");
     const navigation = useNavigate();
@@ -54,7 +53,7 @@ const DownloadPage: React.FC = () => {
     useEffect(() => {
         const fetchRecords = async () => {
             try {
-                const response = await apiService.get(`${API_URL}/rest/records`);
+                const response = await apiService.get(`${API_URL}/rest/records`, {headers:headers});
                 if (response.status === 200) {
                     setRecords(response.data)
                     setIsLoading(false);
@@ -74,10 +73,8 @@ const DownloadPage: React.FC = () => {
                     } else {
                         // Error occured while setting up the request
                     }
-                    setIsDownloadingForm(false);
                 } else {
                     console.error(error);
-                    setIsDownloadingForm(false);
                     setErrorMessage('Something went wrong...');
                 }
                 setIsLoading(false);
@@ -88,7 +85,7 @@ const DownloadPage: React.FC = () => {
     }, []);
 
     const downloadRecord = async (formRecord: FormRecord) => {
-        setIsDownloadingForm(true);
+        setIsLoading(true);
         try {
             const response = await apiService.post(
                 `${API_URL}/rest/formGen`,
@@ -104,27 +101,60 @@ const DownloadPage: React.FC = () => {
                 priority: Priority.MEDIUM,
                 description: formRecord.formTemplate,
                 downloadDate: Date.now(),
-                wasUpdated: false
+                wasUpdated: false,
+                hasRecord: true
             };
             // console.log(response?.data);
             await setInDB(FORMS_DATA_STORE, formDataKey, resData);
             await setInDB(FORMS_METADATA_STORE, uuidv4(), form_metadata);
             await setInDB(FORMS_RECORDS_STORE, formDataKey, formRecord);
 
-            setIsDownloadingForm(false);
+            setIsLoading(false);
 
             await downloadPossibleValues(resData);
         } catch (e) {
             console.error(e);
             setErrorMessage(`Ooops, something went wrong while downloading form ${formRecord.localName}`);
-            setIsDownloadingForm(false);
+            setIsLoading(false);
             setNeedsAuthentization(true);
             return;
         }
     };
 
+    const downloadForm = async (data: FormDownloadInputs) => {
+        setIsLoading(true);
+        const newRecord = createNewRecord();
+        newRecord.formTemplate = data.option['@id'];
+        newRecord.localName = data.name;
+        try{
+            const responseFormGen = await apiService.post(FORM_GEN_URL, newRecord);
+            console.log(responseFormGen);
+            if (responseFormGen.status === 200) {
+                const generatedForm: FormDataContent = responseFormGen.data;
+                const dateCreated = Date.now();
+                const defaultMetadata: FormMetadata = createNewMetadata(data.name, dateCreated);
+
+                await setInDB(FORMS_DATA_STORE, defaultMetadata.dataKey, generatedForm);
+                await setInDB(FORMS_RECORDS_STORE, defaultMetadata.dataKey, newRecord);
+                await setInDB(FORMS_METADATA_STORE, uuidv4() as string, defaultMetadata);
+
+                await downloadPossibleValues(generatedForm);
+                setShowSuccessToast(true);
+            } else {
+                console.error('Oopsie', responseFormGen.data);
+                setShowErrorToast(true);
+                // setError('root',responseLogin.data);
+            }
+        } catch(e){
+            //TODO: handle axios errors
+            console.error(e);
+            setShowErrorToast(true);
+        }
+        setIsLoading(false);
+
+    };
+
     const downloadPossibleValues = async (formResponse: any) => {
-        setIsDownloadingDropdown(true);
 
         const FORM_GEN_POSSIBLE_VALUES_URL = `${API_URL}/rest/formGen/possibleValues`;
         for (const property of formResponse['@graph']) {
@@ -133,8 +163,6 @@ const DownloadPage: React.FC = () => {
                 await apiService.get(FORM_GEN_POSSIBLE_VALUES_URL, {params: {query: query}});
             }
         }
-        setShowSuccessToast(true);
-        setIsDownloadingDropdown(false);
     }
 
     const handleClickBack: React.MouseEventHandler<HTMLButtonElement> = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -169,8 +197,6 @@ const DownloadPage: React.FC = () => {
                 return forms.filter(f => f !== form);
             });
         }
-
-
     };
     const handleTabClick = (index:number) => {
         setTabIndex(index);
@@ -187,8 +213,6 @@ const DownloadPage: React.FC = () => {
                 </Button>
             }
         </>;
-
-    const isDownloading = isDownloadingDropdown || isDownloadingForm;
 
     if (needsAuthentization) {
         return (
@@ -210,34 +234,18 @@ const DownloadPage: React.FC = () => {
         );
     }
 
-    if (isDownloading) {
-        return (
-            <Layout onClickBack={handleClickBack} title={"Download page"} specialButton={specialButton}
-                    isLoading={isLoading}>
-                <div>
-                    <h1>Download Form</h1>
-                    <p>Downloading form or dropdown values...</p>
-
-                    <Link to={RoutingConstants.DASHBOARD}>Back to Dashboard</Link>
-                </div>
-
-            </Layout>
-        );
-    }
-
-
     return (
         <Layout onClickBack={handleClickBack} title={"Download page"} specialButton={specialButton}
                 isLoading={isLoading}>
-            <ToastComponent show={showSuccessToast} title={'Popiči'} type={'success'} delay={4000}
-                            message={'Task failed unsuccessfully'} onHide={() => setShowSuccessToast(false)}
+            <ToastComponent show={showSuccessToast} title={'Success'} type={'success'} delay={4000}
+                            message={''} onHide={() => setShowSuccessToast(false)}
                             position={'top-center'}></ToastComponent>
-            <ToastComponent show={showErrorToast} title={'Yikers'} type={'error'} delay={4000}
-                            message={'Task failed successfully'} onHide={() => setShowErrorToast(false)}
+            <ToastComponent show={showErrorToast} title={'Error'} type={'error'} delay={4000}
+                            message={'An error has occured.'} onHide={() => setShowErrorToast(false)}
                             position={'top-center'}></ToastComponent>
 
             {errorMessage &&
-                <Container fluid className={'justify-content-center'}>
+                <Container className={'justify-content-center'}>
                     <Alert variant="danger" dismissible onClose={() => setErrorMessage('')}>
                         <Alert.Heading>Error!</Alert.Heading>
                         <p>
@@ -246,21 +254,21 @@ const DownloadPage: React.FC = () => {
                     </Alert>
                 </Container>
             }
-            <Container fluid className={"position-relative"}>
-                <Container >
+            <Container fluid className={"position-relative p-0"}>
+                <Container>
                     {
                         tabIndex === 0 ?
-                            <FormDownloadTab></FormDownloadTab> :
+                            <FormDownloadTab downloadForm={downloadForm}></FormDownloadTab> :
                             <RecordDownloadTab records={records} downloadRecord={downloadRecord} checkboxChanged={checkboxChanged}></RecordDownloadTab>
                     }
                 </Container>
-                <Row className={"position-fixed bottom-0 w-100 justify-content-between"} style={{paddingBottom:"3.5rem"}}>
+                <Container className={"d-flex position-fixed bottom-0"} style={{paddingBottom:"3.5rem"}}>
                     {
                         tabs.map((tab, i) =>
-                            <Button key={i} id={`${tab.id}`} disabled={tabIndex === tab.id} onClick={() => handleTabClick(tab.id)}>{tab.tabTitle}</Button>
+                            <Button className={"flex-grow-1"} key={i} id={`${tab.id}`} disabled={tabIndex === tab.id} onClick={() => handleTabClick(tab.id)}>{tab.tabTitle}</Button>
                         )
                     }
-                </Row>
+                </Container>
             </Container>
         </Layout>
 

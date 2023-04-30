@@ -1,3 +1,5 @@
+import {Question} from "./FormsDBSchema";
+
 export default interface SFormsRefInterface {
     context: {
         updateData: (e: any) => {};
@@ -5,7 +7,7 @@ export default interface SFormsRefInterface {
         getData: () => {};
         getFormQuestionsData: (e: any) => {};
     };
-    getFormData: () => {};
+    getFormData: () => Question;
     getFormQuestionsData: () => {};
     handleStepChange: (e: any, n: any, r: any) => {};
     props: {
