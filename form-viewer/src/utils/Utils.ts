@@ -136,7 +136,7 @@ export const answerUriWorkaround = (formData: Question) => {
     if (formData.answers) {
         for (const answer of formData.answers) {
             if (answer.uri && answer.uri.startsWith('_')) {
-                delete answer.uri;
+                 delete answer.uri;
             }
         }
     }

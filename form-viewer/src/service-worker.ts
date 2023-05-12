@@ -86,7 +86,8 @@ self.addEventListener('message', (event) => {
 // }),'POST');
 registerRoute(({url}) =>
         url.pathname.includes('possibleValues')
-    , new StaleWhileRevalidate({cacheName: 'forms-possible-values'}));
+    , new StaleWhileRevalidate({cacheName: 'forms-possible-values'})
+);
 
 // registerRoute(USER_CREDS_URL, new StaleWhileRevalidate({
 //     cacheName: 'login-creds-cache',

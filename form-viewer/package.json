@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@kbss-cvut/s-forms": "file:../../s-forms/s-forms/kbss-cvut-s-forms-0.6.5.tgz",
+    "@kbss-cvut/s-forms": "file:./kbss-cvut-s-forms-0.6.5.tgz",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^12.8.3",
@@ -24,6 +24,7 @@
     "react-icons": "^4.8.0",
     "react-router-dom": "^6.9.0",
     "react-scripts": "4.0.3",
+    "s-forms-geo-components": "file:./s-forms-geo-components-0.1.6.tgz",
     "typescript": "^4.9.5",
     "util": "^0.12.5",
     "uuid": "^9.0.0",

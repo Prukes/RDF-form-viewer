@@ -1,0 +1,9 @@
+services:
+  formviewer:
+    image: formviewer
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "10000:80"
+    restart: "always"

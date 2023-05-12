@@ -97,6 +97,10 @@
     "requires-answer-if": {
       "@id": "http://onto.fel.cvut.cz/ontologies/form/requires-answer-if",
       "@type": "@id"
+    },
+    "is-duplicable": {
+      "@id": "http://onto.fel.cvut.cz/ontologies/form/is-question-duplicable",
+      "@type": "@id"
     }
   },
   "@graph": [
@@ -105,12 +109,14 @@
       "@type": "doc:question",
       "has_related_question": [],
       "has-layout-class": "file",
+      "is-duplicable": true,
       "label": "Vyberte soubor"
     },
     {
       "@id": "file-222",
       "@type": "doc:question",
       "has_related_question": [],
+      "is-duplicable": true,
       "has-layout-class": "file",
       "label": "Vyberte soubor"
     },
@@ -118,6 +124,7 @@
       "@id": "file-333",
       "@type": "doc:question",
       "has_related_question": [],
+      "is-duplicable": true,
       "has-layout-class": "file",
       "label": "Vyberte soubor"
     },

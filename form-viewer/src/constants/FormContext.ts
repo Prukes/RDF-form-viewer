@@ -1,4 +1,8 @@
 const CONTEXT_CONSTANT = {
+    "is-duplicable": {
+        "@id": "http://onto.fel.cvut.cz/ontologies/form/is-question-duplicable",
+        "@type": "@id"
+    },
     "has-layout-class" : {
         "@id" : "http://onto.fel.cvut.cz/ontologies/form-layout/has-layout-class"
     },

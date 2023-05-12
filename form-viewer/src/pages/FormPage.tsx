@@ -15,6 +15,8 @@ import CONTEXT_CONSTANT from "../constants/FormContext";
 import SForms, {Constants} from "@kbss-cvut/s-forms";
 import {apiService} from "../utils/ApiService";
 import {answerUriWorkaround} from "../utils/Utils";
+// import GeoComponents from "s-forms-geo-components";
+
 
 const FormPage: React.FC = () => {
     const {uuid} = useParams<{ uuid: string }>();
@@ -43,6 +45,7 @@ const FormPage: React.FC = () => {
         if (formRefValue) {
             console.log(formRef);
             const formData:Question = formRefValue.getFormData();
+            // server returns HTTP400 when answer.uri is of blank node identifier
             answerUriWorkaround(formData);
 
             const formRoot = formRefValue.context.getData();
@@ -123,6 +126,7 @@ const FormPage: React.FC = () => {
                     //@ts-ignore
                     options={SFormsOptions}
                     fetchTypeAheadValues={fetchTypeAheadValues}
+                    // mappingRule={GeoComponents.mappingRule}
                     //@ts-ignore
                     loader={<Spinner animation={"border"}/>}
                     enableForwardSkip={true}

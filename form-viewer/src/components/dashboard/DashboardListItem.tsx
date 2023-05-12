@@ -27,7 +27,7 @@ const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
                 </div>
             </div>
             <div className="ms-auto">
-                <DropdownButton title={"Actions"} variant="link" align={"end"}>
+                <DropdownButton title={"Actions"} variant="primary" align={"end"}>
                     <Dropdown.Item onClick={() => props.handleEditClick(props.item)}>
                         <BsPencil /> Edit
                     </Dropdown.Item>
