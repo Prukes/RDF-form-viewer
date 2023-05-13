@@ -238,7 +238,7 @@ const DownloadPage: React.FC = () => {
         <Layout onClickBack={handleClickBack} title={"Download page"} specialButton={specialButton}
                 isLoading={isLoading}>
             <ToastComponent show={showSuccessToast} title={'Success'} type={'success'} delay={4000}
-                            message={''} onHide={() => setShowSuccessToast(false)}
+                            message={'Winner Winner Chicken Dinner'} onHide={() => setShowSuccessToast(false)}
                             position={'top-center'}></ToastComponent>
             <ToastComponent show={showErrorToast} title={'Error'} type={'error'} delay={4000}
                             message={'An error has occured.'} onHide={() => setShowErrorToast(false)}

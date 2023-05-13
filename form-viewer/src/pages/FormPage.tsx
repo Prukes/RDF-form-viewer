@@ -15,6 +15,8 @@ import CONTEXT_CONSTANT from "../constants/FormContext";
 import SForms, {Constants} from "@kbss-cvut/s-forms";
 import {apiService} from "../utils/ApiService";
 import {answerUriWorkaround} from "../utils/Utils";
+import ToastComponent from "../components/toasts/ToastComponent";
+import {ToastData} from "../types/Types";
 // import GeoComponents from "s-forms-geo-components";
 
 
@@ -22,6 +24,12 @@ const FormPage: React.FC = () => {
     const {uuid} = useParams<{ uuid: string }>();
     const [form, setForm] = useState<FormDataContent | null>(null);
     const [record, setRecord] = useState<FormRecord | null>(null);
+    const [toastState, setToastState] = useState<ToastData>({
+        toastMessageTitle: '',
+        showToast: false,
+        type: 'error',
+        toastMessage: ''
+    });
     const navigate = useNavigate();
     const formRef = useRef<SFormsRefInterface>();
 
@@ -44,7 +52,7 @@ const FormPage: React.FC = () => {
         const formRefValue = formRef.current;
         if (formRefValue) {
             console.log(formRef);
-            const formData:Question = formRefValue.getFormData();
+            const formData: Question = formRefValue.getFormData();
             // server returns HTTP400 when answer.uri is of blank node identifier
             answerUriWorkaround(formData);
 
@@ -53,7 +61,7 @@ const FormPage: React.FC = () => {
 
             await setInDB(FORMS_RECORDS_STORE, uuid as string, recordUpdate);
 
-            if(formRoot.hasOwnProperty('root')){
+            if (formRoot.hasOwnProperty('root')) {
                 // @ts-ignore
                 const graph = formRoot['root'];
                 const formQuestionsData = await jsonld.flatten(graph, CONTEXT_CONSTANT);
@@ -75,10 +83,10 @@ const FormPage: React.FC = () => {
         return result.data;
     }
 
-    const onFileUpload = async (file:FormFile) => {
+    const onFileUpload = async (file: FormFile) => {
         console.log(file);
-        const files:FormFile[] = await getFromDB(FORMS_FILES_STORE,uuid as string);
-        if(files == undefined){
+        const files: FormFile[] = await getFromDB(FORMS_FILES_STORE, uuid as string);
+        if (files == undefined) {
             await setInDB(FORMS_FILES_STORE, uuid as string, [file]);
         } else {
             await setInDB(FORMS_FILES_STORE, uuid as string, [...files, file]);
@@ -87,27 +95,27 @@ const FormPage: React.FC = () => {
 
     };
 
-    const onGetFile = async (questionAnswer:any) => {
-        if(questionAnswer && questionAnswer[0]){
+    const onGetFile = async (questionAnswer: any) => {
+        if (questionAnswer && questionAnswer[0]) {
             const answer = questionAnswer[0];
             const fileObjectValue = answer[Constants.HAS_OBJECT_VALUE];
-            if(!fileObjectValue) return null;
+            if (!fileObjectValue) return null;
 
             const fileID = fileObjectValue['@id'];
             console.log(fileID);
-            const files:FormFile[] = await getFromDB(FORMS_FILES_STORE,uuid as string);
-            const file = files.find((f) => f.id == fileID);
+            const files: FormFile[] = await getFromDB(FORMS_FILES_STORE, uuid as string);
+            const file = files.find((f) => f.id === fileID);
             console.log(file);
-            if(file){
+            if (file) {
                 return file;
             }
         }
     };
 
-    const onFileDelete = async (file:FormFile) => {
-        const files:FormFile[] = await getFromDB(FORMS_FILES_STORE,uuid as string);
-        const filteredFiles:FormFile[] = files.filter((f) => f.id !== file.id);
-        await setInDB(FORMS_FILES_STORE,uuid as string, [...filteredFiles]);
+    const onFileDelete = async (file: FormFile) => {
+        const files: FormFile[] = await getFromDB(FORMS_FILES_STORE, uuid as string);
+        const filteredFiles: FormFile[] = files.filter((f) => f.id !== file.id);
+        await setInDB(FORMS_FILES_STORE, uuid as string, [...filteredFiles]);
     };
 
     if (!form) {
@@ -118,6 +126,12 @@ const FormPage: React.FC = () => {
         <Layout title={"Form"} onClickBack={() => {
             navigate(-1)
         }} specialButton={<Button onClick={getFormData}><AiFillSave/></Button>}>
+            <ToastComponent delay={3000} message={toastState.toastMessage} title={toastState.toastMessageTitle}
+                            type={toastState.type} show={toastState.showToast} onHide={() => {
+                setToastState((prev) => {
+                    return {...prev, showToast: false}
+                })
+            }}></ToastComponent>
             <Container>
                 <SForms //@ts-ignore
                     form={form}

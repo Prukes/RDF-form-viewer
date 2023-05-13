@@ -18,7 +18,6 @@ const LoginPage = () => {
     const onSubmit = async (data:LoginInputs) => {
         const username = data.username;
         const password = data.password;
-        console.log(username, password);
 
         if (username && password) {
             const responseLogin = await apiService.post(LOGIN_URL, `username=${username}&password=${password}`);
