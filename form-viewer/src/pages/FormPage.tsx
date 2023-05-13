@@ -70,7 +70,13 @@ const FormPage: React.FC = () => {
 
             // console.log('FormData', formData);
             // console.log('FormQuestionData', formQuestionsData);
-
+            setToastState((prev) => {return {
+                ...prev,
+                type:'success',
+                toastMessage:'Should be stored in DB',
+                showToast:true,
+                toastMessageTitle:'Stored'
+            }});
             console.log('hopefully stored record in db');
         }
     }
