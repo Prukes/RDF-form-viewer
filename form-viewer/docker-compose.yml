@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    pull_policy: build
     ports:
       - "10000:80"
     restart: "always"
