@@ -17,7 +17,7 @@ import {apiService} from "../utils/ApiService";
 import {answerUriWorkaround} from "../utils/Utils";
 import ToastComponent from "../components/toasts/ToastComponent";
 import {ToastData} from "../types/Types";
-// import GeoComponents from "s-forms-geo-components";
+import GeoComponents from "s-forms-geo-components";
 
 
 const FormPage: React.FC = () => {
@@ -146,7 +146,7 @@ const FormPage: React.FC = () => {
                     //@ts-ignore
                     options={SFormsOptions}
                     fetchTypeAheadValues={fetchTypeAheadValues}
-                    // mappingRule={GeoComponents.mappingRule}
+                    mappingRule={GeoComponents.mappingRule}
                     //@ts-ignore
                     loader={<Spinner animation={"border"}/>}
                     enableForwardSkip={true}
