@@ -102,22 +102,26 @@
     "is-duplicable": {
       "@id": "http://onto.fel.cvut.cz/ontologies/form/is-question-duplicable",
       "@type": "@id"
+    },
+    "has-related-question-level": {
+      "@id": "http://onto.fel.cvut.cz/ontologies/kodi/sgov2sforms/has-related-question-level"
+    },
+    "is-part-of-location": {
+      "@id": "http://onto.fel.cvut.cz/ontologies/kodi/sgov2sforms/is-part-of-location"
+    },
+    "has-main-processing-aspect-target":  {
+      "@id": "http://onto.fel.cvut.cz/ontologies/kodi/sgov2sforms/has-main-processing-aspect-target"
     }
   },
   "@graph": [
     {
-      "@id": "doc:adresa-6466",
+      "@id": "doc:adresa-8090",
       "@type": "doc:question",
-      "has_related_question": [
-        "doc:m-sto-6112",
-        "doc:ulice-2436",
-        "doc:slo-popisn-9632"
-      ],
-      "has-layout-class": "section",
-      "description": {
-        "@language": "cs",
-        "@value": "Sekce pro vyplnění adresy"
-      },
+      "has_related_question": [],
+      "has-layout-class": "text",
+      "is-part-of-location": "123",
+      "has-main-processing-aspect-target" : "https://slovník.gov.cz/legislativní/sbírka/111/2009/pojem/adresa",
+      "has-related-question-level": 4,
       "label": {
         "@language": "cs",
         "@value": "Adresa"
@@ -282,21 +286,23 @@
       "@type": "doc:question",
       "has_related_question": [],
       "has-layout-class": "type-ahead",
-      "has-possible-value": [{
-        "@id": "doc:option-1406430"
-      },
-      {
-        "@id": "doc:option-7616772"
-      },
-      {
-        "@id": "doc:option-5616682"
-      },
-      {
-        "@id": "doc:option-4807264"
-      },
-      {
-        "@id": "doc:option-8580136"
-      }],
+      "has-possible-value": [
+        {
+          "@id": "doc:option-1406430"
+        },
+        {
+          "@id": "doc:option-7616772"
+        },
+        {
+          "@id": "doc:option-5616682"
+        },
+        {
+          "@id": "doc:option-4807264"
+        },
+        {
+          "@id": "doc:option-8580136"
+        }
+      ],
       "label": {
         "@language": "cs",
         "@value": "Druh"
@@ -487,7 +493,8 @@
         },
         {
           "@id": "doc:option-4920084"
-        }],
+        }
+      ],
       "label": {
         "@language": "cs",
         "@value": "Druh"
@@ -604,16 +611,16 @@
       "has-layout-class": "type-ahead",
       "has-possible-value": [
         {
-          "@id": "option-4798774"
+          "@id": "doc:option-4798774"
         },
         {
-          "@id": "option-6251711"
+          "@id": "doc:option-6251711"
         },
         {
-          "@id": "option-9152411"
+          "@id": "doc:option-9152411"
         },
         {
-          "@id": "option-5297691"
+          "@id": "doc:option-5297691"
         }
       ],
       "label": {
@@ -652,17 +659,18 @@
       "has-layout-class": "type-ahead",
       "has-possible-value": [
         {
-        "@id": "doc:option-1858603"
-      },
-      {
-        "@id": "doc:option-7594416"
-      },
-      {
-        "@id": "doc:option-7824009"
-      },
-      {
-        "@id": "doc:option-9820494"
-      }],
+          "@id": "doc:option-1858603"
+        },
+        {
+          "@id": "doc:option-7594416"
+        },
+        {
+          "@id": "doc:option-7824009"
+        },
+        {
+          "@id": "doc:option-9820494"
+        }
+      ],
       "label": {
         "@language": "cs",
         "@value": "Druh"
@@ -685,7 +693,8 @@
         },
         {
           "@id": "doc:option-4920084"
-        }],
+        }
+      ],
       "label": {
         "@language": "cs",
         "@value": "Druh"
@@ -725,20 +734,21 @@
       "has-layout-class": "type-ahead",
       "has-possible-value": [
         {
-                  "@id": "doc:option-1406430"
-                },
-                {
-                  "@id": "doc:option-7616772"
-                },
-                {
-                  "@id": "doc:option-5616682"
-                },
-                {
-                  "@id": "doc:option-4807264"
-                },
-                {
-                  "@id": "doc:option-8580136"
-                }],
+          "@id": "doc:option-1406430"
+        },
+        {
+          "@id": "doc:option-7616772"
+        },
+        {
+          "@id": "doc:option-5616682"
+        },
+        {
+          "@id": "doc:option-4807264"
+        },
+        {
+          "@id": "doc:option-8580136"
+        }
+      ],
       "label": {
         "@language": "cs",
         "@value": "Druh"
@@ -925,22 +935,22 @@
       "has-layout-class": "type-ahead",
       "has-possible-value": [
         {
-          "@id": "option-6053995"
+          "@id": "doc:option-6053995"
         },
         {
-          "@id": "option-7860348"
+          "@id": "doc:option-7860348"
         },
         {
-          "@id": "option-5385712"
+          "@id": "doc:option-5385712"
         },
         {
-          "@id": "option-2657192"
+          "@id": "doc:option-2657192"
         },
         {
-          "@id": "option-3052576"
+          "@id": "doc:option-3052576"
         },
         {
-          "@id": "option-969697"
+          "@id": "doc:option-969697"
         }
       ],
       "label": {
@@ -1011,13 +1021,13 @@
       "has-layout-class": "type-ahead",
       "has-possible-value": [
         {
-          "@id": "option-2000082"
+          "@id": "doc:option-2000082"
         },
         {
-          "@id": "option-1643006"
+          "@id": "doc:option-1643006"
         },
         {
-          "@id": "option-8554926"
+          "@id": "doc:option-8554926"
         }
       ],
       "label": {
@@ -1077,16 +1087,16 @@
       "has-layout-class": "type-ahead",
       "has-possible-value": [
         {
-          "@id": "option-4209051"
+          "@id": "doc:option-4209051"
         },
         {
-          "@id": "option-2042118"
+          "@id": "doc:option-2042118"
         },
         {
-          "@id": "option-1988476"
+          "@id": "doc:option-1988476"
         },
         {
-          "@id": "option-5513015"
+          "@id": "doc:option-5513015"
         }
       ],
       "label": {
@@ -1510,10 +1520,7 @@
     {
       "@id": "doc:localization-6902",
       "@type": "doc:question",
-      "has_related_question": [
-        "doc:adresa-6466",
-        "doc:sou-adnice-gps-7900"
-      ],
+      "has_related_question": ["doc:um-st-n-4466"],
       "has-layout-class": [
         "section",
         "wizard-step"
@@ -1526,16 +1533,6 @@
       "label": {
         "@language": "cs",
         "@value": "Lokalizace"
-      }
-    },
-    {
-      "@id": "doc:m-sto-6112",
-      "@type": "doc:question",
-      "has_related_question": [],
-      "has-layout-class": "text",
-      "label": {
-        "@language": "cs",
-        "@value": "Město"
       }
     },
     {
@@ -4511,6 +4508,13 @@
       }
     },
     {
+      "@id": "doc:option-1643006",
+      "label": {
+        "@language": "cs",
+        "@value": "Střešní integrované žlaby"
+      }
+    },
+    {
       "@id": "doc:option-1644660",
       "label": {
         "@language": "cs",
@@ -4536,6 +4540,27 @@
       "label": {
         "@language": "cs",
         "@value": "Kostel"
+      }
+    },
+    {
+      "@id": "doc:option-1988476",
+      "label": {
+        "@language": "cs",
+        "@value": "Segmentový vikýř"
+      }
+    },
+    {
+      "@id": "doc:option-2000082",
+      "label": {
+        "@language": "cs",
+        "@value": "Diskrétní žlaby"
+      }
+    },
+    {
+      "@id": "doc:option-2042118",
+      "label": {
+        "@language": "cs",
+        "@value": "Valbový vikýř"
       }
     },
     {
@@ -4567,10 +4592,24 @@
       }
     },
     {
+      "@id": "doc:option-2657192",
+      "label": {
+        "@language": "cs",
+        "@value": "Valbová střecha"
+      }
+    },
+    {
       "@id": "doc:option-2898092",
       "label": {
         "@language": "cs",
         "@value": "Klenba"
+      }
+    },
+    {
+      "@id": "doc:option-3052576",
+      "label": {
+        "@language": "cs",
+        "@value": "Mansardová střecha"
       }
     },
     {
@@ -4602,6 +4641,13 @@
       }
     },
     {
+      "@id": "doc:option-4209051",
+      "label": {
+        "@language": "cs",
+        "@value": "Štítový vikýř"
+      }
+    },
+    {
       "@id": "doc:option-4322016",
       "label": {
         "@language": "cs",
@@ -4613,6 +4659,13 @@
       "label": {
         "@language": "cs",
         "@value": "Římský styl"
+      }
+    },
+    {
+      "@id": "doc:option-4798774",
+      "label": {
+        "@language": "cs",
+        "@value": "Membránová/plechová krytina"
       }
     },
     {
@@ -4658,10 +4711,45 @@
       }
     },
     {
+      "@id": "doc:option-5297691",
+      "label": {
+        "@language": "cs",
+        "@value": "Došková krytina"
+      }
+    },
+    {
+      "@id": "doc:option-5385712",
+      "label": {
+        "@language": "cs",
+        "@value": "Sedlová střecha"
+      }
+    },
+    {
+      "@id": "doc:option-5513015",
+      "label": {
+        "@language": "cs",
+        "@value": "Přístřeškový vikýř"
+      }
+    },
+    {
       "@id": "doc:option-5616682",
       "label": {
         "@language": "cs",
         "@value": "Parabolická klenba"
+      }
+    },
+    {
+      "@id": "doc:option-6053995",
+      "label": {
+        "@language": "cs",
+        "@value": "Kopulová střecha"
+      }
+    },
+    {
+      "@id": "doc:option-6251711",
+      "label": {
+        "@language": "cs",
+        "@value": "Šindelová krytina"
       }
     },
     {
@@ -4770,6 +4858,13 @@
       }
     },
     {
+      "@id": "doc:option-7860348",
+      "label": {
+        "@language": "cs",
+        "@value": "Plochá střecha"
+      }
+    },
+    {
       "@id": "doc:option-8093025",
       "label": {
         "@language": "cs",
@@ -4781,6 +4876,13 @@
       "label": {
         "@language": "cs",
         "@value": "Konstrukce arkýřového okna"
+      }
+    },
+    {
+      "@id": "doc:option-8554926",
+      "label": {
+        "@language": "cs",
+        "@value": "Stěnové integrované žlaby"
       }
     },
     {
@@ -4802,6 +4904,13 @@
       "label": {
         "@language": "cs",
         "@value": "Opevnění"
+      }
+    },
+    {
+      "@id": "doc:option-9152411",
+      "label": {
+        "@language": "cs",
+        "@value": "Tašky"
       }
     },
     {
@@ -4837,6 +4946,13 @@
       "label": {
         "@language": "cs",
         "@value": "Pálená cihla"
+      }
+    },
+    {
+      "@id": "doc:option-969697",
+      "label": {
+        "@language": "cs",
+        "@value": "Věžová střecha"
       }
     },
     {
@@ -8294,21 +8410,6 @@
       }
     },
     {
-      "@id": "doc:slo-popisn-9632",
-      "@type": "doc:question",
-      "has_related_question": [],
-      "has-layout-class": "text",
-      "has-preceding-question": "doc:ulice-2436",
-      "description": {
-        "@language": "cs",
-        "@value": "Poštovní směrovací číslo"
-      },
-      "label": {
-        "@language": "cs",
-        "@value": "Číslo popisné"
-      }
-    },
-    {
       "@id": "doc:sloup-pil-3065",
       "@type": "doc:question",
       "has_related_question": [
@@ -8336,23 +8437,6 @@
       "label": {
         "@language": "cs",
         "@value": "Sloup/pilíř"
-      }
-    },
-    {
-      "@id": "doc:sou-adnice-gps-7900",
-      "@type": "doc:question",
-      "has_related_question": [
-        "doc:zem-pisn-d-lka-581",
-        "doc:zem-pisn-ka-6552"
-      ],
-      "has-layout-class": "section",
-      "description": {
-        "@language": "cs",
-        "@value": "Sekce pro vyplnění souřadnic GPS"
-      },
-      "label": {
-        "@language": "cs",
-        "@value": "Souřadnice GPS"
       }
     },
     {
@@ -8594,14 +8678,18 @@
       }
     },
     {
-      "@id": "doc:ulice-2436",
+      "@id": "doc:um-st-n-4466",
       "@type": "doc:question",
-      "has_related_question": [],
-      "has-layout-class": "text",
-      "has-preceding-question": "doc:m-sto-6112",
+      "has_related_question": [
+        "doc:adresa-8090",
+        "doc:zem-pisn-d-lka-6959",
+        "doc:zem-pisn-ka-5360"
+      ],
+      "has-layout-class": "section",
+      "has-related-question-level": 3,
       "label": {
         "@language": "cs",
-        "@value": "Ulice"
+        "@value": "Umístění"
       }
     },
     {
@@ -8692,25 +8780,26 @@
       }
     },
     {
-      "@id": "doc:zem-pisn-d-lka-581",
+      "@id": "doc:zem-pisn-d-lka-6959",
       "@type": "doc:question",
       "has_related_question": [],
       "has-layout-class": "text",
+      "is-part-of-location": "123",
+      "has-main-processing-aspect-target": "https://slovník.gov.cz/veřejný-sektor/pojem/zemepisná-délka",
+      "has-related-question-level": 4,
       "label": {
         "@language": "cs",
         "@value": "Zeměpisná délka"
       }
     },
     {
-      "@id": "doc:zem-pisn-ka-6552",
+      "@id": "doc:zem-pisn-ka-5360",
       "@type": "doc:question",
       "has_related_question": [],
       "has-layout-class": "text",
-      "has-preceding-question": "doc:zem-pisn-d-lka-581",
-      "description": {
-        "@language": "cs",
-        "@value": ""
-      },
+      "is-part-of-location": "123",
+      "has-main-processing-aspect-target": "https://slovník.gov.cz/veřejný-sektor/pojem/zemepisná-šírka",
+      "has-related-question-level": 4,
       "label": {
         "@language": "cs",
         "@value": "Zeměpisná šířka"
@@ -8726,125 +8815,6 @@
       ],
       "has-layout-class": "form",
       "label": "Root node"
-    },
-    {
-      "@id": "option-1643006",
-      "label": {
-        "@language": "cs",
-        "@value": "Střešní integrované žlaby"
-      }
-    },
-    {
-      "@id": "option-1988476",
-      "label": {
-        "@language": "cs",
-        "@value": "Segmentový vikýř"
-      }
-    },
-    {
-      "@id": "option-2000082",
-      "label": {
-        "@language": "cs",
-        "@value": "Diskrétní žlaby"
-      }
-    },
-    {
-      "@id": "option-2042118",
-      "label": {
-        "@language": "cs",
-        "@value": "Valbový vikýř"
-      }
-    },
-    {
-      "@id": "option-2657192",
-      "label": {
-        "@language": "cs",
-        "@value": "Valbová střecha"
-      }
-    },
-    {
-      "@id": "option-3052576",
-      "label": {
-        "@language": "cs",
-        "@value": "Mansardová střecha"
-      }
-    },
-    {
-      "@id": "option-4209051",
-      "label": {
-        "@language": "cs",
-        "@value": "Štítový vikýř"
-      }
-    },
-    {
-      "@id": "option-4798774",
-      "label": {
-        "@language": "cs",
-        "@value": "Membránová/plechová krytina"
-      }
-    },
-    {
-      "@id": "option-5297691",
-      "label": {
-        "@language": "cs",
-        "@value": "Došková krytina"
-      }
-    },
-    {
-      "@id": "option-5385712",
-      "label": {
-        "@language": "cs",
-        "@value": "Sedlová střecha"
-      }
-    },
-    {
-      "@id": "option-5513015",
-      "label": {
-        "@language": "cs",
-        "@value": "Přístřeškový vikýř"
-      }
-    },
-    {
-      "@id": "option-6053995",
-      "label": {
-        "@language": "cs",
-        "@value": "Kopulová střecha"
-      }
-    },
-    {
-      "@id": "option-6251711",
-      "label": {
-        "@language": "cs",
-        "@value": "Šindelová krytina"
-      }
-    },
-    {
-      "@id": "option-7860348",
-      "label": {
-        "@language": "cs",
-        "@value": "Plochá střecha"
-      }
-    },
-    {
-      "@id": "option-8554926",
-      "label": {
-        "@language": "cs",
-        "@value": "Stěnové integrované žlaby"
-      }
-    },
-    {
-      "@id": "option-9152411",
-      "label": {
-        "@language": "cs",
-        "@value": "Tašky"
-      }
-    },
-    {
-      "@id": "option-969697",
-      "label": {
-        "@language": "cs",
-        "@value": "Věžová střecha"
-      }
     }
   ]
 }

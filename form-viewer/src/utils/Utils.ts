@@ -104,7 +104,7 @@ export const renameEdges = (form: any, nameMap: {}) => {
                 const prevId = prevHasRelatedQuestion;
                 // @ts-ignore
                 const newId = nameMap[prevId];
-                prevHasRelatedQuestion = newId;
+                obj['has_related_question'] = newId;
             }
         }
     }
