@@ -25,7 +25,7 @@ const ToastComponent: React.FC<ToastProps> = (props) => {
 
 
     return (
-        <ToastContainer className="p-3" position={props.position ?? 'top-center'}>
+        <ToastContainer className="p-3" position={props.position ?? 'bottom-center'} containerPosition={'fixed'}>
             <Toast show={props.show} onClose={handleHideToast} delay={props.delay} autohide={autohide}>
                 <Toast.Header>
                     {getIcon()}

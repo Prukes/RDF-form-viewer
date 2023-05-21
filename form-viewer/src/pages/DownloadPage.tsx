@@ -218,7 +218,7 @@ const DownloadPage: React.FC = () => {
         return (
             <Layout onClickBack={handleClickBack} title={"Download page"} specialButton={specialButton}>
                 <Container fluid className={'justify-content-center'}>
-                    <Alert variant="danger" dismissible onClose={() => setNeedsAuthentization(false)}>
+                    <Alert variant="info" dismissible onClose={() => setNeedsAuthentization(false)}>
                         <Alert.Heading>Error!</Alert.Heading>
                         <p>
                             User needs to authenticate. Importing a form is also an option :).

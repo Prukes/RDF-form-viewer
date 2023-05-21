@@ -14,7 +14,6 @@ import {useNavigate} from "react-router-dom";
 import Layout from "../components/Layout";
 import FilterModal from "../components/modals/FilterModal";
 import Priority from "../utils/PriorityEnum";
-import {FaTimes} from "react-icons/all";
 import {apiService} from "../utils/ApiService";
 import {RECORDS_URL} from "../constants/ApiConstants";
 import {v4 as uuidv4} from 'uuid';
@@ -36,6 +35,7 @@ const Dashboard: React.FC = () => {
         type: 'success',
         toastMessage: ''
     });
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const handleClose = () => setShowFilterModal(false);
 
@@ -94,12 +94,14 @@ const Dashboard: React.FC = () => {
     };
 
     useEffect(() => {
+        setIsLoading(true);
         fetchForms();
         backupForms();
-
+        setIsLoading(false);
     }, []);
 
     const sendRecordToServer = async (formMetadata: FormsDBSchema['form-metadata'], formRec?: FormRecord) => {
+        setIsLoading(true);
         let formRecord = formRec;
         if (formRecord === null || formRecord === undefined) {
             formRecord = await getFromDB(FORMS_RECORDS_STORE, formMetadata.value.dataKey);
@@ -142,7 +144,7 @@ const Dashboard: React.FC = () => {
                             console.log('all done');
                             setToastData({
                                 showToast: true,
-                                toastMessage: 'Record was successfully created',
+                                toastMessage: 'Record was successfully created and uploaded.',
                                 toastMessageTitle: 'Success',
                                 type: 'success'
                             });
@@ -158,6 +160,7 @@ const Dashboard: React.FC = () => {
                 }
             }
         } catch (error) {
+            setIsLoading(false);
             if (axios.isAxiosError(error)) {
                 console.log(error);
                 if (error.response) {
@@ -245,8 +248,8 @@ const Dashboard: React.FC = () => {
 
     }
 
-    const handleOpenClick = (formDataKey: string) => {
-        navigate(`${RoutingConstants.FORM}/${formDataKey}`);
+    const handleOpenClick = (formMetadata: FormsDBSchema['form-metadata']) => {
+        navigate(`${RoutingConstants.FORM}/${formMetadata.key}`, {state:formMetadata.value});
     };
 
     const handleEditClick = (formData: FormsDBSchema['form-metadata']) => {
@@ -320,19 +323,17 @@ const Dashboard: React.FC = () => {
             return {...prevState, showToast: false}
         });
     }
+    const getNoFormsErrorMessage = () => {
+        return isFiltering? "No forms or records match the provided filter.": "No forms or records are currently downloaded.";
+    }
+
 
     const specialButton =
         <ButtonGroup>
             <Button variant={isFiltering ? "info" : "success"} onClick={() => {
-                if (!isFiltering) {
-                    setShowFilterModal(true);
-                } else {
-                    fetchForms();
-                    setIsFiltering(false);
-                }
-
+                setShowFilterModal(true);
             }}>
-                {isFiltering ? <FaTimes/> : <BsSearch/>}
+                <BsSearch/>
             </Button>
             <Button variant="success" onClick={onDownloadRedirect} className={"ms-2"}>
                 <BsDownload/>
@@ -340,29 +341,33 @@ const Dashboard: React.FC = () => {
         </ButtonGroup>
 
     return (
-        <Layout title={"Dashboard"} specialButton={specialButton}>
-            <FilterModal show={showFilterModal} onHide={handleClose} filterFunction={filterForms}></FilterModal>
+        <Layout title={"Dashboard"} specialButton={specialButton} isLoading={isLoading}>
+            <FilterModal show={showFilterModal} onHide={handleClose} filterFunction={filterForms} isFiltering={isFiltering} stopFilterFunction={()=> {fetchForms();setIsFiltering(false);}}></FilterModal>
             <ToastComponent message={toastData.toastMessage} title={toastData.toastMessageTitle}
                             type={toastData.type}
                             show={toastData.showToast} onHide={toastOnHide} extra={toastData.extra}
                             position={'bottom-center'}></ToastComponent>
             <Container fluid className="mobile-view-container">
-                <Row className="mobile-view-content mt-2">
-                    <Col>
-                        <ListGroup>
-                            {forms.map((item) => (
-                                <DashboardListItem item={item}
-                                                   handleOpenClick={handleOpenClick}
-                                                   handleEditClick={handleEditClick}
-                                                   handleRemoveClick={handleRemoveClick}
-                                                   sendRecordToServer={sendRecordToServer}
-                                                   handleExportClick={handleExportClick}
-                                                   handleDuplicateClick={handleDuplicateClick}
-                                />
-                            ))}
-                        </ListGroup>
-                    </Col>
-                </Row>
+
+                {forms.length != 0
+                    ? <Row className="mobile-view-content mt-2">
+                        <Col>
+                            <ListGroup>
+                                {forms.map((item) => (
+                                    <DashboardListItem item={item}
+                                                       handleOpenClick={handleOpenClick}
+                                                       handleEditClick={handleEditClick}
+                                                       handleRemoveClick={handleRemoveClick}
+                                                       sendRecordToServer={sendRecordToServer}
+                                                       handleExportClick={handleExportClick}
+                                                       handleDuplicateClick={handleDuplicateClick}
+                                    />
+                                ))}
+                            </ListGroup>
+                        </Col>
+                    </Row>
+                    :  <h2 className={"mt-4 text-center"}>{getNoFormsErrorMessage()}</h2>
+                }
 
             </Container>
         </Layout>

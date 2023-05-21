@@ -8,7 +8,7 @@ const CONTEXT_CONSTANT = {
     "has-main-processing-aspect-target":  {
         "@id": "http://onto.fel.cvut.cz/ontologies/kodi/sgov2sforms/has-main-processing-aspect-target"
     },
-    "is-duplicable": {
+    "is-question-duplicable": {
         "@id": "http://onto.fel.cvut.cz/ontologies/form/is-question-duplicable",
         "@type": "@id"
     },

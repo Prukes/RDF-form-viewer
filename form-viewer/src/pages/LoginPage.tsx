@@ -8,6 +8,7 @@ import Layout from "../components/Layout";
 import {apiService} from "../utils/ApiService";
 import {AuthContext} from "../contexts/UserContextProvider";
 import {LoginData, LoginInputs} from "../types/Types";
+import axios from "axios/index";
 
 
 const LoginPage = () => {
@@ -19,18 +20,39 @@ const LoginPage = () => {
         const username = data.username;
         const password = data.password;
 
-        if (username && password) {
-            const responseLogin = await apiService.post(LOGIN_URL, `username=${username}&password=${password}`);
-            console.log(responseLogin);
-            const data: LoginData = responseLogin.data;
+        try {
+            if (username && password) {
+                const responseLogin = await apiService.post(LOGIN_URL, `username=${username}&password=${password}`);
+                console.log(responseLogin);
+                const data: LoginData = responseLogin.data;
 
-            if (responseLogin.status !== 200 && !data.loggedIn){
+                if (responseLogin.status == 200 && data.loggedIn){
+                    await downloadUserCredentials();
+                } else {
+                    console.error('Oopsie', responseLogin.data);
+                    setError('root',responseLogin.data.errorMessage);
+                }
 
-                console.error('Oopsie', responseLogin.data);
-                setError('root',responseLogin.data);
             }
-            await downloadUserCredentials();
+        } catch(error) {
+            if (axios.isAxiosError(error)) {
+                if (error.response) {
+                    // Request made but the server responded with an error
+                    if (error.response.status == 500) {
+                        console.error(error);
+                        setError('root', error);
+                    }
+                    // Request made but the server did not respond
+                } else if (error.request) {
+                    setError('root', error);
+                } else {
+                    // Error occured while setting up the request
+                }
+            } else {
+                console.error(error);
+            }
         }
+
 
     };
 
@@ -60,7 +82,7 @@ const LoginPage = () => {
                                 placeholder="Enter username"
                                 name="username"
                             />
-                            {errors.username && <span>This field is required</span>}
+                            {errors.username && <Form.Text>This field is required</Form.Text>}
                         </Form.Group>
 
                         <Form.Group controlId="formBasicPassword" className="mb-3">
@@ -71,9 +93,9 @@ const LoginPage = () => {
                                            name="password"
 
                             />
-                            {errors.password && <span>This field is required</span>}
+                            {errors.password && <Form.Text>This field is required</Form.Text>}
                         </Form.Group>
-
+                        {errors.root && <p>{errors.root.message}</p>}
                         <Button variant="primary" type="submit" >
                             Submit
                         </Button>

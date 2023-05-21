@@ -1,14 +1,19 @@
 import React, {useEffect, useRef, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {getFromDB, setInDB} from "../services/DBService";
-import {FORMS_DATA_STORE, FORMS_FILES_STORE, FORMS_RECORDS_STORE} from "../constants/DatabaseConstants";
+import {
+    FORMS_DATA_STORE,
+    FORMS_FILES_STORE,
+    FORMS_METADATA_STORE,
+    FORMS_RECORDS_STORE
+} from "../constants/DatabaseConstants";
 import {Button, Container, Spinner} from "react-bootstrap";
 import SFormsOptions from "../utils/SFormsOptions";
 import {API_URL} from "../constants/ApiConstants";
 import Layout from "../components/Layout";
 import {AiFillSave} from "react-icons/all";
 import SFormsRefInterface from "../utils/SFormsRefInterface";
-import {FormDataContent, FormFile, FormRecord, Question} from "../utils/FormsDBSchema";
+import {FormDataContent, FormFile, FormMetadata, FormRecord, Question} from "../utils/FormsDBSchema";
 import jsonld from 'jsonld';
 import CONTEXT_CONSTANT from "../constants/FormContext";
 
@@ -31,16 +36,22 @@ const FormPage: React.FC = () => {
         toastMessage: ''
     });
     const navigate = useNavigate();
+    const {state} = useLocation();
+    const [metadata, setMetadata] = useState<FormMetadata | null>(state);
     const formRef = useRef<SFormsRefInterface>();
 
     useEffect(() => {
         const readFormFromDB = async () => {
+            if(!metadata){
+                const formMetadata = await getFromDB(FORMS_METADATA_STORE, uuid as string);
+                setMetadata(formMetadata);
+            }
             if (!form) {
-                const formTmp = await getFromDB(FORMS_DATA_STORE, uuid as string);
+                const formTmp = await getFromDB(FORMS_DATA_STORE, metadata?.dataKey as string);
                 setForm(formTmp);
             }
             if (!record) {
-                const rec = await getFromDB(FORMS_RECORDS_STORE, uuid as string);
+                const rec = await getFromDB(FORMS_RECORDS_STORE, metadata?.dataKey as string);
                 setRecord(rec);
             }
         };
@@ -56,24 +67,26 @@ const FormPage: React.FC = () => {
             // server returns HTTP400 when answer.uri is of blank node identifier
             answerUriWorkaround(formData);
 
+
+
             const formRoot = formRefValue.context.getData();
             const recordUpdate = {...record, question: formData};
+            const updatedMetadata = {...metadata, wasUpdated: true};
 
-            await setInDB(FORMS_RECORDS_STORE, uuid as string, recordUpdate);
+            await setInDB(FORMS_RECORDS_STORE, metadata?.dataKey as string, recordUpdate);
+            await setInDB(FORMS_METADATA_STORE, uuid as string, updatedMetadata)
 
             if (formRoot.hasOwnProperty('root')) {
                 // @ts-ignore
                 const graph = formRoot['root'];
                 const formQuestionsData = await jsonld.flatten(graph, CONTEXT_CONSTANT);
-                await setInDB(FORMS_DATA_STORE, uuid as string, formQuestionsData);
+                await setInDB(FORMS_DATA_STORE, metadata?.dataKey as string, formQuestionsData);
             }
 
-            // console.log('FormData', formData);
-            // console.log('FormQuestionData', formQuestionsData);
             setToastState((prev) => {return {
                 ...prev,
                 type:'success',
-                toastMessage:'Should be stored in DB',
+                toastMessage:'Changes have been saved!',
                 showToast:true,
                 toastMessageTitle:'Stored'
             }});
@@ -134,7 +147,7 @@ const FormPage: React.FC = () => {
         <Layout title={"Form"} onClickBack={() => {
             navigate(-1)
         }} specialButton={<Button onClick={getFormData}><AiFillSave/></Button>}>
-            <ToastComponent delay={3000} message={toastState.toastMessage} title={toastState.toastMessageTitle}
+            <ToastComponent position={'bottom-center'} delay={3000} message={toastState.toastMessage} title={toastState.toastMessageTitle}
                             type={toastState.type} show={toastState.showToast} onHide={() => {
                 setToastState((prev) => {
                     return {...prev, showToast: false}

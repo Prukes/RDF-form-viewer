@@ -16,7 +16,7 @@ export type FormDownloadComponentProps = {
     checkboxChanged: Function;
 };
 
-export type FormData = {
+export type ImportFormData = {
     name: string;
     template: string;
     file: FileList;

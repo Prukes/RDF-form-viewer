@@ -48,8 +48,9 @@ const EditForm: React.FC = () => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        const trimmedTags = tags.filter((val) => val);
         try{
-            await setInDB(FORMS_METADATA_STORE,state.key,{...formMetadata, name, priority, tags});
+            await setInDB(FORMS_METADATA_STORE,state.key,{...formMetadata, name, priority, tags:trimmedTags});
         } catch (e:any){
             console.error(e);
             setError(e.toString());
@@ -112,8 +113,8 @@ const EditForm: React.FC = () => {
                 </Form.Group>
 
                 {formTags}
-                <Container className={"text-center mt-2"}>
-                    <Button variant="secondary" onClick={handleAddTag}>
+                <Container className={"d-flex flex-row text-center mt-2 justify-content-end"}>
+                    <Button variant="secondary" onClick={handleAddTag} className={"me-2"}>
                         Add Tag
                     </Button>
                     <Button variant="primary" className="ml-2" type="submit">

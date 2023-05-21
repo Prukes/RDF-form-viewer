@@ -11,17 +11,15 @@ import {useNavigate} from "react-router-dom";
 import {checkData, createNewMetadata, createNewRecord, renameEdges} from "../utils/Utils";
 import jsonld from "jsonld";
 import CONTEXT_CONSTANT from "../constants/FormContext";
-import {FormData} from '../types/Types';
-
+import {ImportFormData} from '../types/Types';
 
 
 const ImportPage: React.FC = () => {
-    const {register, handleSubmit, formState: {errors}} = useForm<FormData>();
-    const [errorMessage, setErrorMessage] = useState<string>('');
+    const {register, handleSubmit, formState: {errors}, reset} = useForm<ImportFormData>();
     const [showSuccessToast, setShowSuccessToast] = useState<boolean>(false);
     const navigation = useNavigate();
 
-    const onSubmit = (data: FormData) => {
+    const onSubmit = (data: ImportFormData) => {
         const file = data.file[0];
         const reader = new FileReader();
 
@@ -30,17 +28,16 @@ const ImportPage: React.FC = () => {
             try {
                 const fileDataParsed = JSON.parse(fileData);
                 await handleSaveToIndexedDB(fileDataParsed, data);
-                setErrorMessage("");
                 setShowSuccessToast(true);
+                reset();
             } catch (error) {
-                setErrorMessage("Error parsing JSON file.");
             }
         };
 
         reader.readAsText(file);
     };
 
-    const handleSaveToIndexedDB = async (jsonData: Object, data: FormData) => {
+    const handleSaveToIndexedDB = async (jsonData: Object, data: ImportFormData) => {
         try {
             const dateCreated = Date.now()
             const formMetadata: FormMetadata = createNewMetadata(data.name, dateCreated);
@@ -50,7 +47,7 @@ const ImportPage: React.FC = () => {
             console.log(jsonData);
             const flattenedData = await jsonld.flatten(jsonData, CONTEXT_CONSTANT);
             const nameMap = {};
-            checkData(flattenedData,nameMap);
+            checkData(flattenedData, nameMap);
             renameEdges(flattenedData, nameMap);
             console.log(flattenedData);
 
@@ -59,7 +56,6 @@ const ImportPage: React.FC = () => {
             await setInDB(FORMS_DATA_STORE, formMetadata.dataKey, flattenedData);
 
         } catch (e: any) {
-            setErrorMessage(e);
             setShowSuccessToast(false);
         }
     };
@@ -67,40 +63,41 @@ const ImportPage: React.FC = () => {
 
     return (
         <Layout title={'Import page'} onClickBack={() => navigation(-1)}>
-            <ToastComponent message={'Form was successfully imported!'} title={'Success'} type={'Success'} show={showSuccessToast}
-                            position={'bottom-center'} delay={2000} onHide={() => {
+            <ToastComponent message={'Form was successfully imported!'} title={'Success'} type={'Success'}
+                            show={showSuccessToast}
+                            position={'bottom-center'} delay={4000} onHide={() => {
                 setShowSuccessToast(false)
             }}></ToastComponent>
-                <Form onSubmit={handleSubmit(onSubmit)}>
+            <Form onSubmit={handleSubmit(onSubmit)}>
                 <Form.Group>
-                <Form.Label>Name:</Form.Label>
-                <Form.Control {...register("name", {required: true})} />
-            {errors.name && <Form.Text>This field is required</Form.Text>}
+                    <Form.Label>Name:</Form.Label>
+                    <Form.Control {...register("name", {required: true})} />
+                    {errors.name && <Form.Text>This field is required</Form.Text>}
                 </Form.Group>
 
                 <Form.Group>
-                <Form.Label>Template:</Form.Label>
-                <Form.Control {...register("template", {required: true})} />
-            {errors.template && <Form.Text>This field is required</Form.Text>}
+                    <Form.Label>Template:</Form.Label>
+                    <Form.Control {...register("template", {required: true})} />
+                    {errors.template && <Form.Text>This field is required</Form.Text>}
                 </Form.Group>
 
                 <Form.Group>
-                <Form.Label>File:</Form.Label>
-                <Form.Control
-                type="file"
-                accept=".json"
-            {...register("file", {required: true})}
-                />
-            {errors.file && <Form.Text>This field is required</Form.Text>}
+                    <Form.Label>File:</Form.Label>
+                    <Form.Control
+                        type="file"
+                        accept=".json"
+                        {...register("file", {required: true})}
+                    />
+                    {errors.file && <Form.Text>This field is required</Form.Text>}
                 </Form.Group>
 
                 <Button variant="primary" type="submit" className={'mt-2'}>
-                Import
+                    Import
                 </Button>
-                </Form>
-                </Layout>
+            </Form>
+        </Layout>
 
-                );
-            };
+    );
+};
 
-            export default ImportPage;
+export default ImportPage;
