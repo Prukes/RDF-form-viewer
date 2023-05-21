@@ -159,6 +159,7 @@ const Dashboard: React.FC = () => {
 
                 }
             }
+           setIsLoading(false);
         } catch (error) {
             setIsLoading(false);
             if (axios.isAxiosError(error)) {
