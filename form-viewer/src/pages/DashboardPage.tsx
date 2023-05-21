@@ -249,7 +249,7 @@ const Dashboard: React.FC = () => {
     }
 
     const handleOpenClick = (formMetadata: FormsDBSchema['form-metadata']) => {
-        navigate(`${RoutingConstants.FORM}/${formMetadata.key}`, {state:formMetadata.value});
+        navigate(`${RoutingConstants.FORM}/${formMetadata.key}`, {state: formMetadata.value});
     };
 
     const handleEditClick = (formData: FormsDBSchema['form-metadata']) => {
@@ -324,7 +324,7 @@ const Dashboard: React.FC = () => {
         });
     }
     const getNoFormsErrorMessage = () => {
-        return isFiltering? "No forms or records match the provided filter.": "No forms or records are currently downloaded.";
+        return isFiltering ? "No forms or records match the provided filter." : "No forms or records are currently downloaded.";
     }
 
 
@@ -342,7 +342,11 @@ const Dashboard: React.FC = () => {
 
     return (
         <Layout title={"Dashboard"} specialButton={specialButton} isLoading={isLoading}>
-            <FilterModal show={showFilterModal} onHide={handleClose} filterFunction={filterForms} isFiltering={isFiltering} stopFilterFunction={()=> {fetchForms();setIsFiltering(false);}}></FilterModal>
+            <FilterModal show={showFilterModal} onHide={handleClose} filterFunction={filterForms}
+                         isFiltering={isFiltering} stopFilterFunction={() => {
+                fetchForms();
+                setIsFiltering(false);
+            }}></FilterModal>
             <ToastComponent message={toastData.toastMessage} title={toastData.toastMessageTitle}
                             type={toastData.type}
                             show={toastData.showToast} onHide={toastOnHide} extra={toastData.extra}
@@ -366,7 +370,7 @@ const Dashboard: React.FC = () => {
                             </ListGroup>
                         </Col>
                     </Row>
-                    :  <h2 className={"mt-4 text-center"}>{getNoFormsErrorMessage()}</h2>
+                    : <h2 className={"mt-4 text-center"}>{getNoFormsErrorMessage()}</h2>
                 }
 
             </Container>

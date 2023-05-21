@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import {LOGIN_URL, USER_CREDS_URL} from "../constants/ApiConstants";
@@ -15,10 +15,12 @@ const LoginPage = () => {
     const { register, handleSubmit, setError, formState: {errors} } = useForm<LoginInputs>();
     const navigation = useNavigate();
     const authContext = useContext(AuthContext);
+    const [loginError, setLoginError] = useState<string>('');
 
     const onSubmit = async (data:LoginInputs) => {
         const username = data.username;
         const password = data.password;
+        setLoginError('');
 
         try {
             if (username && password) {
@@ -30,7 +32,7 @@ const LoginPage = () => {
                     await downloadUserCredentials();
                 } else {
                     console.error('Oopsie', responseLogin.data);
-                    setError('root',responseLogin.data.errorMessage);
+                    setLoginError(responseLogin.data.errorMessage);
                 }
 
             }
@@ -40,11 +42,11 @@ const LoginPage = () => {
                     // Request made but the server responded with an error
                     if (error.response.status == 500) {
                         console.error(error);
-                        setError('root', error);
+                        setLoginError(error.response.data);
                     }
                     // Request made but the server did not respond
                 } else if (error.request) {
-                    setError('root', error);
+                    setLoginError('Server was unreachable.');
                 } else {
                     // Error occured while setting up the request
                 }
@@ -61,7 +63,7 @@ const LoginPage = () => {
         console.log(responseUserCreds);
         if (responseUserCreds.status !== 200){
             console.error('Oopsie', responseUserCreds.data);
-            setError('root',responseUserCreds.data);
+            setLoginError(responseUserCreds.status +' Something went wrong during user credentials download.')
         } else {
             authContext.setAuthUser(responseUserCreds.data);
             navigation(-1);
@@ -95,7 +97,7 @@ const LoginPage = () => {
                             />
                             {errors.password && <Form.Text>This field is required</Form.Text>}
                         </Form.Group>
-                        {errors.root && <p>{errors.root.message}</p>}
+                        {loginError && <p className={"text-wrap text-danger"}>{loginError}</p>}
                         <Button variant="primary" type="submit" >
                             Submit
                         </Button>

@@ -239,10 +239,10 @@ const DownloadPage: React.FC = () => {
                 isLoading={isLoading}>
             <ToastComponent show={showSuccessToast} title={'Success'} type={'success'} delay={4000}
                             message={'Winner Winner Chicken Dinner'} onHide={() => setShowSuccessToast(false)}
-                            position={'top-center'}></ToastComponent>
+                            position={'bottom-center'}></ToastComponent>
             <ToastComponent show={showErrorToast} title={'Error'} type={'error'} delay={4000}
                             message={'An error has occured.'} onHide={() => setShowErrorToast(false)}
-                            position={'top-center'}></ToastComponent>
+                            position={'bottom-center'}></ToastComponent>
 
             {errorMessage &&
                 <Container className={'justify-content-center'}>
