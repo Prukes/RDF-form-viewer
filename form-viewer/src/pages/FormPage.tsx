@@ -29,6 +29,7 @@ const FormPage: React.FC = () => {
     const {uuid} = useParams<{ uuid: string }>();
     const [form, setForm] = useState<FormDataContent | null>(null);
     const [record, setRecord] = useState<FormRecord | null>(null);
+    const [files, setFiles] = useState<FormFile[]>([]);
     const [toastState, setToastState] = useState<ToastData>({
         toastMessageTitle: '',
         showToast: false,
@@ -53,6 +54,13 @@ const FormPage: React.FC = () => {
             if (!record) {
                 const rec = await getFromDB(FORMS_RECORDS_STORE, metadata?.dataKey as string);
                 setRecord(rec);
+            }
+            if(!files.length){
+                const formFiles = await getFromDB(FORMS_FILES_STORE, metadata?.dataKey as string);
+                if(formFiles){
+                    setFiles(formFiles);
+                    console.log(formFiles);
+                }
             }
         };
 
@@ -81,6 +89,7 @@ const FormPage: React.FC = () => {
                 const graph = formRoot['root'];
                 const formQuestionsData = await jsonld.flatten(graph, CONTEXT_CONSTANT);
                 await setInDB(FORMS_DATA_STORE, metadata?.dataKey as string, formQuestionsData);
+                await setInDB(FORMS_FILES_STORE, metadata?.dataKey as string, files);
             }
 
             setToastState((prev) => {return {
@@ -102,16 +111,14 @@ const FormPage: React.FC = () => {
         return result.data;
     }
 
-    const onFileUpload = async (file: FormFile) => {
-        console.log(file);
-        const files: FormFile[] = await getFromDB(FORMS_FILES_STORE, uuid as string);
-        if (files == undefined) {
-            await setInDB(FORMS_FILES_STORE, uuid as string, [file]);
-        } else {
-            await setInDB(FORMS_FILES_STORE, uuid as string, [...files, file]);
+    const onFileUpload = async (file: FormFile, prevFileID?: string) => {
+        let filesTMP:FormFile[] = [...files];
+        if(prevFileID){
+            filesTMP = filesTMP.filter((f) => f.id !== prevFileID);
         }
 
-
+        filesTMP.push(file);
+        setFiles(filesTMP);
     };
 
     const onGetFile = async (questionAnswer: any) => {
@@ -121,10 +128,10 @@ const FormPage: React.FC = () => {
             if (!fileObjectValue) return null;
 
             const fileID = fileObjectValue['@id'];
-            console.log(fileID);
-            const files: FormFile[] = await getFromDB(FORMS_FILES_STORE, uuid as string);
+            console.log(`Looking for file: ${fileID}`);
+            const files: FormFile[] = await getFromDB(FORMS_FILES_STORE, metadata?.dataKey as string);
             const file = files.find((f) => f.id === fileID);
-            console.log(file);
+            console.log(`found ${file}`);
             if (file) {
                 return file;
             }
@@ -132,9 +139,9 @@ const FormPage: React.FC = () => {
     };
 
     const onFileDelete = async (file: FormFile) => {
-        const files: FormFile[] = await getFromDB(FORMS_FILES_STORE, uuid as string);
+        // const files: FormFile[] = await getFromDB(FORMS_FILES_STORE, metadata?.dataKey as string);
         const filteredFiles: FormFile[] = files.filter((f) => f.id !== file.id);
-        await setInDB(FORMS_FILES_STORE, uuid as string, [...filteredFiles]);
+        // await setInDB(FORMS_FILES_STORE, metadata?.dataKey as string, [...filteredFiles]);
     };
 
     if (!form) {
@@ -147,7 +154,7 @@ const FormPage: React.FC = () => {
         <Layout title={"Form"} onClickBack={() => {
             navigate(-1)
         }} specialButton={<Button onClick={getFormData}><AiFillSave/></Button>}>
-            <ToastComponent position={'bottom-center'} delay={3000} message={toastState.toastMessage} title={toastState.toastMessageTitle}
+            <ToastComponent position={'bottom-center'} delay={4000} message={toastState.toastMessage} title={toastState.toastMessageTitle}
                             type={toastState.type} show={toastState.showToast} onHide={() => {
                 setToastState((prev) => {
                     return {...prev, showToast: false}
