@@ -29,13 +29,13 @@ const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
             <div className="ms-auto">
                 <DropdownButton title={"Actions"} variant="primary" align={"end"}>
                     <Dropdown.Item onClick={() => props.handleEditClick(props.item)}>
-                        <BsPencil /> Edit
+                        <BsPencil /> Edit attributes
                     </Dropdown.Item>
                     <Dropdown.Item onClick={() => props.handleRemoveClick(props.item)}>
                         <BsTrash color={"red"} /> Delete
                     </Dropdown.Item>
                     <Dropdown.Item onClick={() => props.sendRecordToServer(props.item)}>
-                        <AiOutlineUpload /> Upload
+                        <AiOutlineUpload /> Upload to server
                     </Dropdown.Item>
                     <Dropdown.Item onClick={() => props.handleExportClick(props.item)}>
                         <BiDownload color={"black"} /> Export
