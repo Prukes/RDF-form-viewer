@@ -7,6 +7,7 @@ import reportWebVitals from './reportWebVitals';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import "@kbss-cvut/s-forms/dist/s-forms.css";
+import "leaflet/dist/leaflet.css";
 
 ReactDOM.render(
   <React.StrictMode>

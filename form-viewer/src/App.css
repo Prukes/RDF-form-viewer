@@ -18,3 +18,12 @@
   overflow-y: scroll;
   overflow-x: hidden;
 }
+
+/* Leaflet CSS class. Height MUST be set in order to render map. */
+.leaflet-container {
+    min-height: 350px;
+    min-width: 100%;
+    height: 50vh;
+    margin-bottom: 2%;
+    z-index: 0;
+}

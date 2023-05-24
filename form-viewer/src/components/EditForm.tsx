@@ -7,6 +7,8 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {setInDB} from "../services/DBService";
 import {FORMS_METADATA_STORE} from "../constants/DatabaseConstants";
 import {FaTimes} from "react-icons/all";
+import {ToastData} from "../types/Types";
+import ToastComponent from "./toasts/ToastComponent";
 
 
 const EditForm: React.FC = () => {
@@ -18,6 +20,13 @@ const EditForm: React.FC = () => {
     const [priority, setPriority] = useState<Priority>(formMetadata.priority ?? Priority.DEFAULT);
     const [tags, setTags] = useState(formMetadata.tags ?? []);
     const [error, setError] = useState(null);
+    const [nameError, setNameError] = useState<string>("");
+    const [toastState, setToastState] = useState<ToastData>({
+        toastMessageTitle: '',
+        showToast: false,
+        type: 'error',
+        toastMessage: ''
+    });
 
     const handleNameChange: React.ChangeEventHandler<HTMLInputElement> = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
@@ -48,9 +57,22 @@ const EditForm: React.FC = () => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        if(!name){
+            setNameError("Name cannot be empty!");
+            return;
+        } else {
+            setNameError("");
+        }
         const trimmedTags = tags.filter((val) => val);
         try{
             await setInDB(FORMS_METADATA_STORE,state.key,{...formMetadata, name, priority, tags:trimmedTags});
+            setToastState((prev) => {return {
+                ...prev,
+                type:'success',
+                toastMessage:'Changes have been saved!',
+                showToast:true,
+                toastMessageTitle:'Stored'
+            }});
         } catch (e:any){
             console.error(e);
             setError(e.toString());
@@ -87,7 +109,7 @@ const EditForm: React.FC = () => {
                 navigation(-1)
             }} title={`Edit form ${formMetadata.name}`}>
                 <p>{error}</p>
-                <Button variant="primary" className={"text-center mt-2"} onClick={() => {setError(null)}}></Button>
+                <Button variant="primary" className={"text-center mt-2"} onClick={() => {setError(null)}}>Okay</Button>
             </Layout>
         );
     }
@@ -96,10 +118,17 @@ const EditForm: React.FC = () => {
         <Layout onClickBack={() => {
             navigation(-1)
         }} title={`Edit form ${formMetadata.name}`}>
+            <ToastComponent position={'bottom-center'} delay={4000} message={toastState.toastMessage} title={toastState.toastMessageTitle}
+                            type={toastState.type} show={toastState.showToast} onHide={() => {
+                setToastState((prev) => {
+                    return {...prev, showToast: false}
+                })
+            }}></ToastComponent>
             <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="formName">
                     <Form.Label>Name</Form.Label>
                     <Form.Control type="text" placeholder="Enter name" value={name} onChange={handleNameChange}/>
+                    {nameError && <p className={"text-danger"}>{nameError}</p>}
                 </Form.Group>
 
                 <Form.Group controlId="formPriority">

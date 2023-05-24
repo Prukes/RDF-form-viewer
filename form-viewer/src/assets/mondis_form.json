@@ -1650,7 +1650,7 @@
       "has-related-question-level": 3,
       "description": {
         "@language": "cs",
-        "@value": "Geometrie"
+        "@value": "Otázka slouží k určení zeměpisných souřadnic objektu."
       },
       "label": {
         "@language": "cs",
